@@ -1,0 +1,20 @@
+# Authentication
+
+All Tidyzon APIs use JWT Bearer tokens for authentication. Tokens are issued by the auth endpoints and passed in the `Authorization` header on subsequent requests.
+
+---
+
+## Auth Levels
+
+| Level | Login Endpoint | Token Usage |
+|-------|---------------|-------------|
+| **Admin** | `POST /v1/admin/auth/login` | Admin dashboard, management endpoints |
+| **User / Customer** | `POST /v1/auth/sign-in` | Customer app endpoints |
+| **Provider** | `POST /v1/auth/sign-in` (same) | Provider app endpoints |
+| **Public** | None required | Packages, promo codes, etc. |
+
+---
+
+## Token Lifecycle
+
+Tokens expire and can be refreshed via `POST /v1/admin/auth/refresh-token` (admin) or the user sign-in flow. Store tokens only in memory or `sessionStorage` — never in `localStorage`.

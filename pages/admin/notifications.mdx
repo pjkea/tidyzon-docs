@@ -1,0 +1,255 @@
+import { EndpointHero } from '../../components/EndpointHero'
+import { ParamsCard } from '../../components/ParamsCard'
+import { ResponseExplorer } from '../../components/ResponseExplorer'
+import { TryItPanel } from '../../components/TryItPanel'
+
+<EndpointHero
+  method="GET"
+  path="/v1/admin/notifications"
+  title="List Notifications"
+  description="Returns a paginated list of all push notifications sent or scheduled from the admin panel."
+/>
+
+<TryItPanel
+  method="GET"
+  path="/v1/admin/notifications"
+  auth="admin"
+  queryParams={[
+    { name: 'limit', type: 'int', required: false, default: 10 },
+    { name: 'page', type: 'int', required: false, default: 1 },
+    { name: 'status', type: 'string', required: false, description: 'sent / scheduled / failed / cancelled' },
+  ]}
+  sampleQuery={{ limit: 5, page: 1 }}
+/>
+
+<ParamsCard
+  title="Headers"
+  params={[{ name: 'Authorization', type: 'string', required: true, description: 'Bearer {id_token}' }]}
+/>
+
+<ParamsCard
+  title="Query Parameters"
+  params={[
+    { name: 'limit', type: 'int', required: false, default: 10 },
+    { name: 'page', type: 'int', required: false, default: 1 },
+    { name: 'status', type: 'string', required: false, description: 'sent / scheduled / failed / cancelled' },
+  ]}
+/>
+
+<ResponseExplorer
+  responses={[
+    {
+      status: 200,
+      fields: [
+        { name: 'notifications[]', type: 'array', fields: [
+          { name: 'id', type: 'int' },
+          { name: 'title', type: 'string' },
+          { name: 'message', type: 'string' },
+          { name: 'imageUrl', type: 'string | null' },
+          { name: 'clickAction', type: 'string | null' },
+          { name: 'priority', type: 'string', description: 'normal / high' },
+          { name: 'userType', type: 'string', description: 'all / customers / providers / specific' },
+          { name: 'target', type: 'string', description: 'Audience label' },
+          { name: 'targetIds', type: 'array | null', description: 'Specific user IDs when userType=specific' },
+          { name: 'status', type: 'string', description: 'sent / scheduled / failed / cancelled' },
+          { name: 'sentAt', type: 'string | null' },
+          { name: 'scheduledAt', type: 'string | null' },
+          { name: 'deliveryStats', type: 'object', fields: [
+            { name: 'total', type: 'int' },
+            { name: 'delivered', type: 'int' },
+            { name: 'failed', type: 'int' },
+          ]},
+        ]},
+        { name: 'pagination', type: 'object', fields: [
+          { name: 'currentPage', type: 'int' },
+          { name: 'totalCount', type: 'int' },
+          { name: 'totalPages', type: 'int' },
+          { name: 'limit', type: 'int' },
+        ]},
+      ],
+      sample: {
+        notifications: [
+          { id: 1, title: "Service Update", message: "New wash packages available!", imageUrl: null, clickAction: null, priority: "normal", userType: "customers", target: "All Customers", targetIds: null, status: "sent", sentAt: "2026-04-30T10:00:00Z", scheduledAt: null, deliveryStats: { total: 120, delivered: 118, failed: 2 } }
+        ],
+        pagination: { currentPage: 1, totalCount: 1, totalPages: 1, limit: 5 }
+      }
+    },
+    { status: 401, description: 'Unauthorized.', sample: { message: "Unauthorized" } }
+  ]}
+/>
+
+---
+
+<EndpointHero
+  method="POST"
+  path="/v1/admin/notifications"
+  title="Create Notification"
+  description="Creates a new push notification record. Use the /send or /schedule sub-endpoints to dispatch it."
+/>
+
+<TryItPanel
+  method="POST"
+  path="/v1/admin/notifications"
+  auth="admin"
+  bodyParams={[
+    { name: 'title', type: 'string', required: true },
+    { name: 'message', type: 'string', required: true },
+    { name: 'userType', type: 'string', required: true, description: 'all / customers / providers / specific', enum: ['all', 'customers', 'providers', 'specific'] },
+    { name: 'targetIds', type: 'array', required: false, description: 'Required when userType=specific — list of user IDs' },
+    { name: 'imageUrl', type: 'string', required: false },
+    { name: 'clickAction', type: 'string', required: false },
+    { name: 'priority', type: 'string', required: false, default: 'normal', enum: ['normal', 'high'] },
+  ]}
+  sampleBody={{ title: "Service Update", message: "New wash packages available!", userType: "customers", priority: "normal" }}
+/>
+
+<ParamsCard
+  title="Body Parameters"
+  params={[
+    { name: 'title', type: 'string', required: true },
+    { name: 'message', type: 'string', required: true },
+    { name: 'userType', type: 'string', required: true, description: 'all / customers / providers / specific' },
+    { name: 'targetIds', type: 'array', required: false, description: 'User IDs — required when userType=specific' },
+    { name: 'imageUrl', type: 'string', required: false },
+    { name: 'clickAction', type: 'string', required: false },
+    { name: 'priority', type: 'string', required: false, default: 'normal' },
+  ]}
+/>
+
+<ResponseExplorer
+  responses={[
+    { status: 201, sample: { message: "Notification created", id: 42 } },
+    { status: 400, description: 'Missing required fields.', sample: { message: "title and message are required" } }
+  ]}
+/>
+
+---
+
+<EndpointHero
+  method="POST"
+  path="/v1/admin/notifications/{notificationid}/send"
+  title="Send Notification"
+  description="Immediately dispatches a notification to its target audience via Firebase Cloud Messaging."
+/>
+
+<TryItPanel
+  method="POST"
+  path="/v1/admin/notifications/{notificationid}/send"
+  auth="admin"
+  pathParams={[{ name: 'notificationid', type: 'int', required: true, example: '1' }]}
+/>
+
+<ResponseExplorer
+  responses={[
+    { status: 200, sample: { message: "Notification sent successfully", delivered: 118, failed: 2 } },
+    { status: 404, description: 'Notification not found.', sample: { message: "Notification not found" } }
+  ]}
+/>
+
+---
+
+<EndpointHero
+  method="POST"
+  path="/v1/admin/notifications/{notificationid}/schedule"
+  title="Schedule Notification"
+  description="Schedules a notification to be sent at a future time."
+/>
+
+<TryItPanel
+  method="POST"
+  path="/v1/admin/notifications/{notificationid}/schedule"
+  auth="admin"
+  pathParams={[{ name: 'notificationid', type: 'int', required: true, example: '1' }]}
+  bodyParams={[
+    { name: 'scheduled_at', type: 'string', required: true, description: 'ISO 8601 datetime e.g. 2026-05-10T09:00:00Z' },
+  ]}
+  sampleBody={{ scheduled_at: "2026-05-10T09:00:00Z" }}
+/>
+
+<ResponseExplorer
+  responses={[
+    { status: 200, sample: { message: "Notification scheduled", scheduled_at: "2026-05-10T09:00:00Z" } },
+    { status: 400, sample: { message: "scheduled_at is required" } }
+  ]}
+/>
+
+---
+
+<EndpointHero
+  method="POST"
+  path="/v1/admin/notifications/{notificationid}/cancel"
+  title="Cancel Scheduled Notification"
+  description="Cancels a notification that is in scheduled status. Has no effect on already-sent notifications."
+/>
+
+<TryItPanel
+  method="POST"
+  path="/v1/admin/notifications/{notificationid}/cancel"
+  auth="admin"
+  pathParams={[{ name: 'notificationid', type: 'int', required: true, example: '1' }]}
+/>
+
+<ResponseExplorer
+  responses={[
+    { status: 200, sample: { message: "Notification cancelled" } },
+    { status: 400, description: 'Cannot cancel — already sent.', sample: { message: "Cannot cancel a notification that has already been sent" } }
+  ]}
+/>
+
+---
+
+<EndpointHero
+  method="PUT"
+  path="/v1/admin/notifications/{notificationid}"
+  title="Update Notification"
+  description="Updates the content of a notification. Only possible while status is pending or scheduled."
+/>
+
+<TryItPanel
+  method="PUT"
+  path="/v1/admin/notifications/{notificationid}"
+  auth="admin"
+  pathParams={[{ name: 'notificationid', type: 'int', required: true, example: '1' }]}
+  bodyParams={[
+    { name: 'title', type: 'string', required: false },
+    { name: 'message', type: 'string', required: false },
+    { name: 'imageUrl', type: 'string', required: false },
+    { name: 'priority', type: 'string', required: false },
+  ]}
+/>
+
+<ResponseExplorer
+  responses={[
+    { status: 200, sample: { message: "Notification updated" } },
+    { status: 400, description: 'Cannot update sent notification.', sample: { message: "Cannot modify a notification that has already been sent" } }
+  ]}
+/>
+
+---
+
+<EndpointHero
+  method="DELETE"
+  path="/v1/admin/notifications/{notificationid}"
+  title="Delete Notification"
+  description="Permanently deletes a notification record."
+/>
+
+<TryItPanel
+  method="DELETE"
+  path="/v1/admin/notifications/{notificationid}"
+  auth="admin"
+  pathParams={[{ name: 'notificationid', type: 'int', required: true, example: '1' }]}
+/>
+
+<ResponseExplorer
+  responses={[
+    { status: 200, sample: { message: "Notification deleted" } },
+    { status: 404, sample: { message: "Notification not found" } }
+  ]}
+/>
+
+## Notes
+
+- All routes are served by the `notificationHandlerAdmin` lambda which dispatches on method + path suffix.
+- The typical workflow: `POST /notifications` → `POST /notifications/{id}/send` (immediate) or `POST /notifications/{id}/schedule` (future).
+- `deliveryStats.failed` counts FCM tokens that were invalid or unreachable — not an error in the API call itself.

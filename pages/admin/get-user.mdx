@@ -1,0 +1,97 @@
+import { EndpointHero } from '../../components/EndpointHero'
+import { ParamsCard } from '../../components/ParamsCard'
+import { ResponseExplorer } from '../../components/ResponseExplorer'
+import { TryItPanel } from '../../components/TryItPanel'
+
+<EndpointHero
+  method="GET"
+  path="/v1/admin/users/{userid}"
+  title="Get User"
+  description="Returns the full detail record for a single user — profile info, role, verification status, address, and computed statistics. Powers the Manage User detail page."
+/>
+
+<TryItPanel
+  method="GET"
+  path="/v1/admin/users/{userid}"
+  auth="admin"
+  pathParams={[{ name: 'userid', type: 'int', required: true, description: 'Target user ID', example: '9' }]}
+  sampleQuery={{}}
+/>
+
+<ParamsCard
+  title="Headers"
+  params={[{ name: 'Authorization', type: 'string', required: true, description: 'Bearer {id_token}' }]}
+/>
+
+<ParamsCard
+  title="Path Parameters"
+  params={[{ name: 'userid', type: 'int', required: true, description: 'Target user ID (the customer being viewed)' }]}
+/>
+
+<ResponseExplorer
+  responses={[
+    {
+      status: 200,
+      description: 'Full user profile.',
+      fields: [
+        { name: 'data', type: 'object', fields: [
+          { name: 'user_id', type: 'int' },
+          { name: 'username', type: 'string' },
+          { name: 'email', type: 'string' },
+          { name: 'role', type: 'object', fields: [
+            { name: 'role_id', type: 'int' },
+            { name: 'role_name', type: 'string' },
+          ]},
+          { name: 'is_active', type: 'int', description: '1 = active' },
+          { name: 'created_at', type: 'string' },
+          { name: 'updated_at', type: 'string', description: 'Used as "Last Active" in the UI' },
+          { name: 'statistics', type: 'object', fields: [
+            { name: 'account_period', type: 'string', description: 'Pre-formatted: "New" / "X Days" / "X Weeks" / "X Months" / "X Years"' },
+            { name: 'completed_services', type: 'int | "New"', description: 'Literal "New" when 0' },
+            { name: 'avg_rating', type: 'float | "new"', description: 'Literal "new" when no ratings' },
+          ]},
+          { name: 'details', type: 'object', fields: [
+            { name: 'first_name', type: 'string' },
+            { name: 'last_name', type: 'string' },
+            { name: 'phone_number', type: 'string | null' },
+            { name: 'address', type: 'object', fields: [
+              { name: 'street_address_1', type: 'string | null' },
+              { name: 'street_address_2', type: 'string | null' },
+              { name: 'city', type: 'string | null' },
+              { name: 'state', type: 'string | null' },
+              { name: 'postal_code', type: 'string | null' },
+              { name: 'formatted_address', type: 'string | null' },
+              { name: 'latitude', type: 'float | null' },
+              { name: 'longitude', type: 'float | null' },
+            ]},
+            { name: 'verification', type: 'object', fields: [
+              { name: 'email_verified', type: 'bool' },
+              { name: 'phone_verified', type: 'bool' },
+            ]},
+          ]},
+        ]}
+      ],
+      sample: {
+        message: "User profile retrieved successfully",
+        data: {
+          user_id: 1774, username: "michael.oakwasi@tidyzon.com", email: "michael.oakwasi@tidyzon.com",
+          role: { role_id: 1, role_name: "User" },
+          is_active: 1, created_at: "April 29, 2026 09:42 AM", updated_at: "April 29, 2026 09:42 AM",
+          statistics: { account_period: "New", completed_services: "New", avg_rating: "new" },
+          details: {
+            first_name: "Michael Akwasi", last_name: "Osei", phone_number: null,
+            address: { street_address_1: null, city: null, state: null, postal_code: null, formatted_address: null, latitude: null, longitude: null },
+            verification: { email_verified: true, phone_verified: false }
+          }
+        }
+      }
+    },
+    { status: 404, description: 'User not found.', sample: { message: "User not found" } }
+  ]}
+/>
+
+## Notes
+
+- `statistics.account_period` and `avg_rating` use the literal string `"new"` — check the type before numeric formatting.
+- The `userid` query param visible on some calls (e.g. `?userid=9`) is the **calling admin's** user ID for audit logging; the path param `{userid}` is the **target user**.
+- The Manage User page also calls `/v1/admin/requests?customerid={id}` and `/v1/admin/statements?userId={id}`.

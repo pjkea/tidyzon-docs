@@ -1,0 +1,223 @@
+import { EndpointHero } from '../../components/EndpointHero'
+import { ParamsCard } from '../../components/ParamsCard'
+import { ResponseExplorer } from '../../components/ResponseExplorer'
+import { TryItPanel } from '../../components/TryItPanel'
+
+<EndpointHero
+  method="GET"
+  path="/v1/admin/providers/summary"
+  title="Provider Summary Cards"
+  description="Returns aggregate provider statistics: totals, active/inactive counts, verification breakdown, new provider count, and top performers by rating."
+/>
+
+<TryItPanel
+  method="GET"
+  path="/v1/admin/providers/summary"
+  auth="admin"
+  queryParams={[
+    { name: 'startdate', type: 'string', required: false, description: 'ISO date (YYYY-MM-DD). When provided with enddate, scopes new_providers_in_range.' },
+    { name: 'enddate', type: 'string', required: false, description: 'ISO date (YYYY-MM-DD).' },
+  ]}
+/>
+
+<ParamsCard
+  title="Headers"
+  params={[{ name: 'Authorization', type: 'string', required: true, description: 'Bearer {id_token}' }]}
+/>
+
+<ParamsCard
+  title="Query Parameters"
+  params={[
+    { name: 'startdate', type: 'string', required: false, description: 'YYYY-MM-DD — start of date range for new provider count' },
+    { name: 'enddate', type: 'string', required: false, description: 'YYYY-MM-DD — end of date range' },
+  ]}
+/>
+
+<ResponseExplorer
+  responses={[
+    {
+      status: 200,
+      fields: [
+        { name: 'data', type: 'object', fields: [
+          { name: 'total_providers', type: 'int' },
+          { name: 'active_providers', type: 'int' },
+          { name: 'inactive_providers', type: 'int' },
+          { name: 'verified_providers', type: 'int', description: 'Both background and equipment verified' },
+          { name: 'pending_verification', type: 'int' },
+          { name: 'new_providers_last_30_days', type: 'int | null', description: 'Set when no date range is supplied' },
+          { name: 'new_providers_in_range', type: 'int | null', description: 'Set when startdate + enddate are supplied' },
+          { name: 'average_rating', type: 'float' },
+          { name: 'top_providers[]', type: 'array', fields: [
+            { name: 'tidysp_id', type: 'int' },
+            { name: 'user_id', type: 'int' },
+            { name: 'username', type: 'string' },
+            { name: 'email', type: 'string' },
+            { name: 'first_name', type: 'string | null' },
+            { name: 'last_name', type: 'string | null' },
+            { name: 'review_count', type: 'int' },
+            { name: 'average_rating', type: 'float' },
+          ]},
+          { name: 'availability_distribution[]', type: 'array', fields: [
+            { name: 'status', type: 'string', description: 'Available / Unavailable' },
+            { name: 'count', type: 'int' },
+          ]},
+          { name: 'verification_distribution[]', type: 'array', fields: [
+            { name: 'status', type: 'string', description: 'Fully Verified / Background Verified Only / Equipment Verified Only / Not Verified' },
+            { name: 'count', type: 'int' },
+          ]},
+          { name: 'generated_at', type: 'string', description: 'ISO 8601 timestamp' },
+          { name: 'date_range', type: 'object | undefined', description: 'Only present when date filters were applied', fields: [
+            { name: 'start_date', type: 'string' },
+            { name: 'end_date', type: 'string' },
+          ]},
+        ]},
+      ],
+      sample: {
+        message: "Provider summary retrieved successfully",
+        data: {
+          total_providers: 12,
+          active_providers: 8,
+          inactive_providers: 4,
+          verified_providers: 5,
+          pending_verification: 7,
+          new_providers_last_30_days: 3,
+          new_providers_in_range: null,
+          average_rating: 4.35,
+          top_providers: [],
+          availability_distribution: [
+            { status: "Available", count: 8 },
+            { status: "Unavailable", count: 4 }
+          ],
+          verification_distribution: [
+            { status: "Fully Verified", count: 5 },
+            { status: "Not Verified", count: 7 }
+          ],
+          generated_at: "2026-05-07T10:00:00.000000"
+        }
+      }
+    },
+    { status: 401, sample: { message: "Email not found in token" } }
+  ]}
+/>
+
+## Notes
+
+- `top_providers[]` only includes providers with **≥ 5 reviews**, ordered by average rating descending (max 10 entries).
+- `average_rating` and `top_providers[]` are computed from the `ratings` table (`recipient_side = 'provider'`).
+- `new_providers_last_30_days` is populated when no date range is supplied; `new_providers_in_range` is populated instead when `startdate` + `enddate` are both present.
+
+---
+
+<EndpointHero
+  method="POST"
+  path="/v1/admin/providers/washkit/{washkitid}/status"
+  title="Update Washkit Item Status"
+  description="Updates the status of a provider's washkit inventory item. Admin-only action used to approve or flag equipment submissions."
+/>
+
+<TryItPanel
+  method="POST"
+  path="/v1/admin/providers/washkit/{washkitid}/status"
+  auth="admin"
+  pathParams={[{ name: 'washkitid', type: 'int', required: true, description: 'tidyspwashkitid row ID', example: '1' }]}
+  bodyParams={[
+    { name: 'washkitstatusid', type: 'int', required: true, description: 'Status ID from the washkitstatuses table' },
+  ]}
+  sampleBody={{ washkitstatusid: 2 }}
+/>
+
+<ParamsCard
+  title="Path Parameters"
+  params={[{ name: 'washkitid', type: 'int', required: true, description: 'ID of the tidyspwashkit row to update' }]}
+/>
+
+<ParamsCard
+  title="Body Parameters"
+  params={[
+    { name: 'washkitstatusid', type: 'int', required: true, description: 'Target status ID — must exist in the washkitstatuses table' },
+  ]}
+/>
+
+<ResponseExplorer
+  responses={[
+    {
+      status: 200,
+      fields: [
+        { name: 'success', type: 'bool' },
+        { name: 'message', type: 'string' },
+        { name: 'wash_kit_id', type: 'int' },
+        { name: 'provider_id', type: 'int' },
+        { name: 'washkitstatusid', type: 'int' },
+      ],
+      sample: { success: true, message: "Wash kit item status updated successfully", wash_kit_id: 1, provider_id: 494, washkitstatusid: 2 }
+    },
+    { status: 400, description: 'Missing washkitstatusid.', sample: { success: false, message: "washkitstatusid is required" } },
+    { status: 404, description: 'Invalid status ID or wash kit row not found.', sample: { success: false, message: "Invalid wash kit status" } }
+  ]}
+/>
+
+---
+
+<EndpointHero
+  method="POST"
+  path="/v1/admin/providers/resources/{id}"
+  title="Update Provider Resource"
+  description="Updates an existing onboarding resource (video or document) record. Used to edit training materials shown to providers during onboarding."
+/>
+
+<TryItPanel
+  method="POST"
+  path="/v1/admin/providers/resources/{id}"
+  auth="admin"
+  pathParams={[{ name: 'id', type: 'int', required: true, description: 'Resource ID', example: '1' }]}
+  bodyParams={[
+    { name: 'resource_type', type: 'string', required: true, description: 'video or document', enum: ['video', 'document'] },
+    { name: 'title', type: 'string', required: true },
+    { name: 'sequence_order', type: 'int', required: true, description: 'Display order position' },
+    { name: 'description', type: 'string', required: false },
+    { name: 'video_url', type: 'string', required: false },
+    { name: 'image_thumbnail', type: 'string', required: false },
+    { name: 'detail', type: 'string', required: false },
+    { name: 'duration_minutes', type: 'int', required: false },
+    { name: 'is_required', type: 'bool', required: false, default: true },
+    { name: 'isactive', type: 'bool', required: false, default: true },
+  ]}
+  sampleBody={{ resource_type: "video", title: "Provider Onboarding Guide", sequence_order: 1, duration_minutes: 10, is_required: true, isactive: true }}
+/>
+
+<ParamsCard
+  title="Path Parameters"
+  params={[{ name: 'id', type: 'int', required: true, description: 'Resource ID to update' }]}
+/>
+
+<ParamsCard
+  title="Body Parameters"
+  params={[
+    { name: 'resource_type', type: 'string', required: true, description: '"video" or "document"' },
+    { name: 'title', type: 'string', required: true },
+    { name: 'sequence_order', type: 'int', required: true },
+    { name: 'description', type: 'string', required: false },
+    { name: 'video_url', type: 'string', required: false },
+    { name: 'image_thumbnail', type: 'string', required: false },
+    { name: 'detail', type: 'string', required: false },
+    { name: 'duration_minutes', type: 'int', required: false },
+    { name: 'is_required', type: 'bool', required: false, default: true },
+    { name: 'isactive', type: 'bool', required: false, default: true },
+  ]}
+/>
+
+<ResponseExplorer
+  responses={[
+    {
+      status: 200,
+      fields: [
+        { name: 'success', type: 'bool' },
+        { name: 'message', type: 'string' },
+        { name: 'resource_id', type: 'int' },
+      ],
+      sample: { success: true, message: "Resource updated successfully", resource_id: 1 }
+    },
+    { status: 400, description: 'Missing required fields or invalid resource_type.', sample: { success: false, message: "Missing required fields: resource_type, title, sequence_order" } },
+    { status: 404, description: 'Resource not found.', sample: { success: false, message: "Resource not found" } }
+  ]}
+/>

@@ -1,0 +1,10 @@
+{
+  "index": "Get Started",
+  "sign-in": "POST Sign In",
+  "admin-login": "POST Admin Login",
+  "sign-up": "POST Sign Up",
+  "logout": "POST Logout",
+  "forgot-password": "POST Forgot Password",
+  "reset-password": "POST Reset Password",
+  "refresh-token": "POST Refresh Token"
+}

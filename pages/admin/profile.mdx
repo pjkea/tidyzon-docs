@@ -1,0 +1,78 @@
+import { EndpointHero } from '../../components/EndpointHero'
+import { ParamsCard } from '../../components/ParamsCard'
+import { ResponseExplorer } from '../../components/ResponseExplorer'
+import { TryItPanel } from '../../components/TryItPanel'
+
+<EndpointHero
+  method="GET"
+  path="/v1/admin/profile"
+  title="Get Admin Profile"
+  description="Returns the authenticated admin's profile: name, email, role, address, and the list of permissions assigned to their role."
+/>
+
+<TryItPanel
+  method="GET"
+  path="/v1/admin/profile"
+  auth="admin"
+/>
+
+<ParamsCard
+  title="Headers"
+  params={[{ name: 'Authorization', type: 'string', required: true, description: 'Bearer {id_token}' }]}
+/>
+
+<ResponseExplorer
+  responses={[
+    {
+      status: 200,
+      fields: [
+        { name: 'user', type: 'object', fields: [
+          { name: 'userid', type: 'int' },
+          { name: 'email', type: 'string' },
+          { name: 'username', type: 'string' },
+          { name: 'firstname', type: 'string | null' },
+          { name: 'lastname', type: 'string | null' },
+          { name: 'phonenumber', type: 'string | null' },
+          { name: 'roleid', type: 'int' },
+          { name: 'rolename', type: 'string', description: 'e.g. "Admin", "Super Admin"' },
+          { name: 'address', type: 'object', fields: [
+            { name: 'streetaddress1', type: 'string | null' },
+            { name: 'streetaddress2', type: 'string | null' },
+            { name: 'city', type: 'string | null' },
+            { name: 'state', type: 'string | null' },
+            { name: 'postalcode', type: 'string | null' },
+            { name: 'countryid', type: 'int | null' },
+          ]},
+          { name: 'permissions[]', type: 'array', description: 'String permission codes assigned to the role' },
+        ]},
+      ],
+      sample: {
+        message: "Profile loaded successfully",
+        user: {
+          userid: 9,
+          email: "nsafulansahk@gmail.com",
+          username: "nsafulansahk@gmail.com",
+          firstname: "Kwamena",
+          lastname: "Essiful-Ansah",
+          phonenumber: "+233249795541",
+          roleid: 5,
+          rolename: "Super Admin",
+          address: {
+            streetaddress1: "265 Peachtree Center Ave NE, Atlanta, GA 30303, USA",
+            streetaddress2: null,
+            city: "Illinois",
+            state: "Chicago",
+            postalcode: null,
+            countryid: 1
+          },
+          permissions: [
+            "view_users", "edit_users", "manage_settings", "delete_users",
+            "manage_roles", "view_requests", "manage_providers", "view_payments", "system_config"
+          ]
+        }
+      }
+    },
+    { status: 401, sample: { message: "Unauthorized" } },
+    { status: 403, sample: { message: "Insufficient permissions" } }
+  ]}
+/>

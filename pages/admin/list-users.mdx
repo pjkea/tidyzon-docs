@@ -1,0 +1,97 @@
+import { EndpointHero } from '../../components/EndpointHero'
+import { ParamsCard } from '../../components/ParamsCard'
+import { ResponseExplorer } from '../../components/ResponseExplorer'
+import { TryItPanel } from '../../components/TryItPanel'
+
+<EndpointHero
+  method="GET"
+  path="/v1/admin/users"
+  title="List Users"
+  description="Returns a paginated list of all users across all roles (customers, service providers, admins) with status filtering, date filtering, and search. Powers the dashboard user count card and the All Users page."
+/>
+
+<TryItPanel
+  method="GET"
+  path="/v1/admin/users"
+  auth="admin"
+  queryParams={[
+    { name: 'limit', type: 'int', required: false, description: 'Max records per page. Default: 10, Max: 50', default: 10 },
+    { name: 'page', type: 'int', required: false, description: 'Page number (1-indexed)', default: 1 },
+    { name: 'status', type: 'string', required: false, description: 'Filter by status: active / dormant / inactive / all', enum: ['active','dormant','inactive','all'] },
+    { name: 'search', type: 'string', required: false, description: 'ILIKE search on email / firstname / lastname' },
+    { name: 'date_from', type: 'string', required: false, description: 'Filter createdat >= YYYY-MM-DD' },
+    { name: 'date_to', type: 'string', required: false, description: 'Filter createdat <= YYYY-MM-DD' },
+  ]}
+  sampleQuery={{ limit: 5, page: 1 }}
+/>
+
+<ParamsCard
+  title="Headers"
+  params={[{ name: 'Authorization', type: 'string', required: true, description: 'Bearer {id_token}' }]}
+/>
+
+<ParamsCard
+  title="Query Parameters"
+  params={[
+    { name: 'status', type: 'string', required: false, description: 'active / dormant / inactive / all', default: 'all' },
+    { name: 'search', type: 'string', required: false, description: 'ILIKE search on email / firstname / lastname' },
+    { name: 'date_from', type: 'string', required: false, description: 'Filter createdat >= YYYY-MM-DD' },
+    { name: 'date_to', type: 'string', required: false, description: 'Filter createdat <= YYYY-MM-DD' },
+    { name: 'limit', type: 'int', required: false, description: 'Max records per page. Default: 10, Max: 50', default: 10 },
+    { name: 'page', type: 'int', required: false, description: 'Page number (1-indexed)', default: 1 },
+  ]}
+/>
+
+<ResponseExplorer
+  responses={[
+    {
+      status: 200,
+      description: 'Paginated list of users.',
+      fields: [
+        { name: 'users[]', type: 'array', fields: [
+          { name: 'userid', type: 'int' },
+          { name: 'email', type: 'string' },
+          { name: 'firstname', type: 'string' },
+          { name: 'lastname', type: 'string' },
+          { name: 'phonenumber', type: 'string | null' },
+          { name: 'roleid', type: 'int', description: '1 = User, 2 = Service Provider, 3 = Admin' },
+          { name: 'role_name', type: 'string', description: 'Human-readable role label' },
+          { name: 'isactive', type: 'int', description: '1 = active account' },
+          { name: 'status', type: 'string', description: 'active / dormant / inactive' },
+          { name: 'since', type: 'string', description: 'Pre-formatted last seen date' },
+          { name: 'avg_rating', type: 'float | "new"', description: 'Literal "new" when user has no ratings' },
+          { name: 'createdat', type: 'string' },
+          { name: 'last_active', type: 'string' },
+        ]},
+        { name: 'pagination', type: 'object', fields: [
+          { name: 'total', type: 'int' },
+          { name: 'page', type: 'int' },
+          { name: 'limit', type: 'int' },
+          { name: 'total_pages', type: 'int' },
+        ]},
+      ],
+      sample: {
+        users: [
+          { userid: 1774, email: "michael.oakwasi@tidyzon.com", firstname: "Michael Akwasi", lastname: "Osei", phonenumber: null, roleid: 1, role_name: "User", isactive: 1, status: "active", since: "April 29, 2026 09:42 AM", avg_rating: "new", createdat: "April 29, 2026 09:42 AM", last_active: "April 29, 2026 09:42 AM" }
+        ],
+        pagination: { total: 22, page: 1, limit: 10, total_pages: 3 }
+      }
+    },
+    { status: 401, description: 'Unauthorized.', sample: { message: "Unauthorized" } }
+  ]}
+/>
+
+## Status Logic
+
+| Status | Condition |
+|--------|-----------|
+| `active` | `isactive = 1` AND `lastloginat >= NOW() - 30 days` |
+| `dormant` | `isactive = 1` AND (`lastloginat IS NULL` OR `lastloginat < NOW() - 30 days`) |
+| `inactive` | `isactive = 0` |
+
+## Notes
+
+- `avg_rating` is the literal string `"new"` (not `0`) when the user has no ratings. The frontend coerces `"new"` → `0` before rendering a star widget.
+- `dormant` API status is labelled **"Deactivated"** in the dashboard UI (danger/red badge). This is intentional — both `dormant` and `inactive` map to red badges.
+- The dashboard "TOTAL NUMBER OF USERS" card calls `?page=1&limit=1` and reads only `pagination.total`.
+- `since` and `last_active` are pre-formatted server-side as `%B %d, %Y %I:%M %p`. The UI does not re-format them.
