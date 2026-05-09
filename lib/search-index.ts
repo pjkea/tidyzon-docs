@@ -22,11 +22,21 @@ export const searchIndex: SearchEntry[] = [
   { title: 'Get User Profile', method: 'GET', path: '/v1/admin/users/{userid}', href: '/admin/users/get', description: 'Full profile of a single customer' },
   { title: 'Update User', method: 'PUT', path: '/v1/admin/users/{userid}', href: '/admin/users/update', description: 'Update customer profile fields' },
   { title: 'User Summary Cards', method: 'GET', path: '/v1/admin/users/summary', href: '/admin/users/activities', description: 'Aggregate user statistics for dashboard' },
+  { title: 'List User Activities', method: 'GET', path: '/v1/admin/users/activities', href: '/admin/users/activities', description: 'Paginated user request activity log' },
+
+  // Admin Users
+  { title: 'List Admin Users', method: 'GET', path: '/v1/admin/admin-users', href: '/admin/admin-users/list', description: 'Paginated list of all admin users' },
+  { title: 'Get Admin User', method: 'GET', path: '/v1/admin/admin-users/{adminid}', href: '/admin/admin-users/get', description: 'Single admin user profile' },
+  { title: 'Create Admin User', method: 'POST', path: '/v1/admin/admin-users', href: '/admin/admin-users/create', description: 'Upgrade existing user to admin role' },
+  { title: 'Update Admin User', method: 'POST', path: '/v1/admin/admin-users/{adminid}/update', href: '/admin/admin-users/update', description: 'Update admin user profile fields' },
+  { title: 'Disable / Enable / Delete Admin User', method: 'POST', path: '/v1/admin/admin-users/{adminid}/disable', href: '/admin/admin-users/manage', description: 'Disable, enable, or delete an admin user' },
 
   // Providers
   { title: 'List Providers', method: 'GET', path: '/v1/admin/providers', href: '/admin/providers/list', description: 'Paginated list of all providers' },
   { title: 'Get Provider Detail', method: 'GET', path: '/v1/admin/providers/{tidyspid}', href: '/admin/providers/get', description: 'Full profile including vehicle, onboarding, ratings' },
   { title: 'Provider Summary Cards', method: 'GET', path: '/v1/admin/providers/summary', href: '/admin/providers/activities', description: 'Aggregate provider statistics for dashboard' },
+  { title: 'List Provider Activities', method: 'GET', path: '/v1/admin/providers/activities', href: '/admin/providers/activities', description: 'Paginated provider order activity log' },
+  { title: 'Provider Status History', method: 'GET', path: '/v1/admin/providers/status/history', href: '/admin/providers/status-history', description: 'Provider onboarding review history log' },
   { title: 'Provider Location History', method: 'GET', path: '/v1/admin/providers/{tidyspid}/locations', href: '/admin/providers/extras', description: 'Saved locations for a provider' },
   { title: 'Update Washkit Status', method: 'POST', path: '/v1/admin/providers/washkit/{washkitid}/status', href: '/admin/providers/extras', description: 'Assign or change washkit status' },
 
@@ -63,6 +73,7 @@ export const searchIndex: SearchEntry[] = [
 
   // Notifications
   { title: 'List Notifications', method: 'GET', path: '/v1/admin/notifications', href: '/admin/notifications/list', description: 'All push notification records' },
+  { title: 'Get Notification', method: 'GET', path: '/v1/admin/notifications/{notificationid}', href: '/admin/notifications/list', description: 'Single notification by ID' },
   { title: 'Create Notification', method: 'POST', path: '/v1/admin/notifications', href: '/admin/notifications/send', description: 'Create a notification draft' },
   { title: 'Send Notification', method: 'POST', path: '/v1/admin/notifications/{notificationid}/send', href: '/admin/notifications/send', description: 'Immediately dispatch a notification' },
   { title: 'Schedule Notification', method: 'POST', path: '/v1/admin/notifications/{notificationid}/schedule', href: '/admin/notifications/send', description: 'Schedule a notification for future delivery' },
@@ -74,8 +85,11 @@ export const searchIndex: SearchEntry[] = [
   { title: 'Create / Update Service Type', method: 'POST', path: '/v1/admin/service-types', href: '/admin/service-types/create', description: 'Create or update service packages' },
   { title: 'Delete Service Type', method: 'DELETE', path: '/v1/admin/service-types/{servicetypeid}', href: '/admin/service-types/delete', description: 'Remove a service type' },
 
+  // Permissions
+  { title: 'Permissions', method: 'GET', path: '/v1/admin/permissions', href: '/admin/permissions', description: 'View and update role permission matrix' },
+
   // Other
-  { title: 'Locations', method: 'GET', path: '/v1/admin/locations', href: '/admin/locations', description: 'All saved service locations' },
+  { title: 'Locations', method: 'GET', path: '/v1/admin/locations', href: '/admin/locations', description: 'All provider and user location records' },
   { title: 'Document Types', method: 'GET', path: '/v1/admin/providers/required-documents', href: '/admin/document-types', description: 'Provider onboarding document type definitions' },
   { title: 'Admin Profile', method: 'GET', path: '/v1/admin/profile', href: '/admin/profile', description: 'Profile of the authenticated admin user' },
 ]
