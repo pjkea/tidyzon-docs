@@ -61,14 +61,21 @@ export function TryItPanel({
   const resolvePath = () => {
     let resolved = path
     Object.entries(pathValues).forEach(([k, v]) => {
-      resolved = resolved.replace(`{${k}}`, v || `:${k}`)
+      resolved = resolved.replace(`{${k}}`, encodeURIComponent(v))
     })
     return resolved
   }
 
+  const missingPathParams = pathFields.filter((f) => !pathValues[f.name]?.trim())
+
   const handleSend = async () => {
     const token = auth === 'admin' ? getAdminToken() : null
     if (auth === 'admin' && !token) { setAuthError('Not authenticated — log in first'); return }
+    if (missingPathParams.length > 0) {
+      setAuthError(`Fill in required path param${missingPathParams.length > 1 ? 's' : ''}: ${missingPathParams.map(f => f.name).join(', ')}`)
+      return
+    }
+    setAuthError('')
     setLoading(true)
     setResult(null)
 
