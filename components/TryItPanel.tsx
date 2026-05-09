@@ -1,267 +1,238 @@
 'use client'
-import React, { useState, useCallback } from 'react'
-import { ChevronDown, PlayCircle, Loader2, Copy } from 'lucide-react'
-import clsx from 'clsx'
-import { Param } from './ParamsCard'
+import { useState } from 'react'
+import { ChevronDown, ChevronRight, Send, LogIn } from 'lucide-react'
+import { callApi, buildCurl, BASE_URL } from '@/lib/api-client'
+import { getAdminToken, loginAdmin } from '@/lib/auth'
 import { CopyButton } from './CopyButton'
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE ?? 'https://25p5ndzk5j.execute-api.us-east-1.amazonaws.com/dev'
-
-const ADMIN_CREDS = { email: 'nsafulansahk@gmail.com', password: 'NewSecurePass123!' }
-const USER_CREDS  = { identifier: 'nsafulansahk@gmail.com', password: 'NewSecurePass123!' }
-
-async function getAdminToken(): Promise<string> {
-  const cached = sessionStorage.getItem('tidyzon_admin_token')
-  if (cached) return cached
-  const res = await fetch(`${BASE_URL}/v1/admin/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(ADMIN_CREDS),
-  })
-  const data = await res.json()
-  const token = data?.token?.id_token ?? ''
-  if (token) sessionStorage.setItem('tidyzon_admin_token', token)
-  return token
+interface TryItField {
+  name: string
+  type: 'string' | 'number' | 'boolean' | 'date'
+  placeholder?: string
+  required?: boolean
 }
 
-async function getUserToken(): Promise<string> {
-  const cached = sessionStorage.getItem('tidyzon_user_token')
-  if (cached) return cached
-  const res = await fetch(`${BASE_URL}/v1/auth/sign-in`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(USER_CREDS),
-  })
-  const data = await res.json()
-  const token = data?.token?.id_token ?? ''
-  if (token) sessionStorage.setItem('tidyzon_user_token', token)
-  return token
-}
-
-function buildCurl(method: string, url: string, token: string, body?: string): string {
-  const parts = [`curl -s -X ${method} '${url}'`]
-  if (token) parts.push(`  -H 'Authorization: Bearer ${token}'`)
-  if (body && body !== '{}') {
-    parts.push(`  -H 'Content-Type: application/json'`)
-    parts.push(`  -d '${body}'`)
-  }
-  return parts.join(' \\\n')
-}
-
-interface Props {
+interface TryItPanelProps {
   method: string
   path: string
-  auth: 'admin' | 'user' | 'public'
-  pathParams?: Param[]
-  queryParams?: Param[]
-  bodyParams?: Param[]
-  sampleQuery?: Record<string, string | number | boolean>
-  sampleBody?: Record<string, unknown>
+  auth?: 'admin' | 'public'
+  queryFields?: TryItField[]
+  pathFields?: TryItField[]
+  bodyFields?: TryItField[]
+  defaultEmail?: string
+  defaultPassword?: string
 }
 
-export function TryItPanel({ method, path, auth, pathParams = [], queryParams = [], bodyParams = [], sampleQuery, sampleBody }: Props) {
+export function TryItPanel({
+  method,
+  path,
+  auth = 'admin',
+  queryFields = [],
+  pathFields = [],
+  bodyFields = [],
+  defaultEmail = 'nsafulansahk@gmail.com',
+  defaultPassword = 'NewSecurePass123!',
+}: TryItPanelProps) {
   const [open, setOpen] = useState(false)
+  const [email, setEmail] = useState(defaultEmail)
+  const [password, setPassword] = useState(defaultPassword)
+  const [authError, setAuthError] = useState('')
+  const [isAuthed, setIsAuthed] = useState(false)
+
+  const initQuery = Object.fromEntries(queryFields.map((f) => [f.name, '']))
+  const initPath = Object.fromEntries(pathFields.map((f) => [f.name, '']))
+  const initBody = Object.fromEntries(bodyFields.map((f) => [f.name, '']))
+
+  const [queryValues, setQueryValues] = useState<Record<string, string>>(initQuery)
+  const [pathValues, setPathValues] = useState<Record<string, string>>(initPath)
+  const [bodyValues, setBodyValues] = useState<Record<string, string>>(initBody)
+
   const [loading, setLoading] = useState(false)
-  const [response, setResponse] = useState<{ status: number; body: string; ms: number } | null>(null)
-  const [token, setToken] = useState('')
-  const [tokenLoading, setTokenLoading] = useState(false)
-  const [values, setValues] = useState<Record<string, string>>(() => {
-    const init: Record<string, string> = {}
-    if (sampleQuery) Object.entries(sampleQuery).forEach(([k, v]) => { init[`query_${k}`] = String(v) })
-    if (sampleBody)  Object.entries(sampleBody).forEach(([k, v])  => { init[`body_${k}`]  = String(v) })
-    return init
-  })
+  const [result, setResult] = useState<{ status: number; body: unknown; durationMs: number } | null>(null)
+  const [curlStr, setCurlStr] = useState('')
 
-  const login = useCallback(async () => {
-    setTokenLoading(true)
-    try {
-      const t = auth === 'admin' ? await getAdminToken() : await getUserToken()
-      setToken(t)
-    } catch (e) {
-      setToken('ERROR: ' + String(e))
-    } finally {
-      setTokenLoading(false)
-    }
-  }, [auth])
+  const handleLogin = async () => {
+    setAuthError('')
+    const res = await loginAdmin(email, password, BASE_URL)
+    if (res.error) { setAuthError(res.error); return }
+    setIsAuthed(true)
+  }
 
-  const send = useCallback(async () => {
+  const resolvePath = () => {
+    let resolved = path
+    Object.entries(pathValues).forEach(([k, v]) => {
+      resolved = resolved.replace(`{${k}}`, v || `:${k}`)
+    })
+    return resolved
+  }
+
+  const handleSend = async () => {
+    const token = auth === 'admin' ? getAdminToken() : null
+    if (auth === 'admin' && !token) { setAuthError('Not authenticated — log in first'); return }
     setLoading(true)
-    setResponse(null)
+    setResult(null)
+
+    const resolvedPath = resolvePath()
+    const body = bodyFields.length
+      ? Object.fromEntries(Object.entries(bodyValues).filter(([, v]) => v !== ''))
+      : undefined
+
     try {
-      let url = BASE_URL + path
-      pathParams.forEach(p => {
-        const val = values[`path_${p.name}`] || `:${p.name}`
-        url = url.replace(`{${p.name}}`, encodeURIComponent(val))
-      })
-      const qs = queryParams
-        .map(p => values[`query_${p.name}`] ? `${p.name}=${encodeURIComponent(values[`query_${p.name}`])}` : null)
-        .filter(Boolean).join('&')
-      if (qs) url += '?' + qs
-
-      const headers: Record<string, string> = {}
-      if (token) headers['Authorization'] = `Bearer ${token}`
-      if (bodyParams.length > 0) headers['Content-Type'] = 'application/json'
-
-      const rawBody = bodyParams.length > 0
-        ? JSON.stringify(Object.fromEntries(bodyParams.map(p => [p.name, values[`body_${p.name}`] ?? ''])))
-        : undefined
-
-      const t0 = Date.now()
-      const res = await fetch(url, { method, headers, body: rawBody })
-      const ms = Date.now() - t0
-      const text = await res.text()
-      let prettyBody: string
-      try { prettyBody = JSON.stringify(JSON.parse(text), null, 2) } catch { prettyBody = text }
-      setResponse({ status: res.status, body: prettyBody, ms })
-    } catch (e) {
-      setResponse({ status: 0, body: String(e), ms: 0 })
+      const res = await callApi(method, resolvedPath, token, queryValues, body)
+      setResult(res)
+      setCurlStr(buildCurl(method, resolvedPath, token, queryValues, body))
     } finally {
       setLoading(false)
     }
-  }, [method, path, pathParams, queryParams, bodyParams, token, values])
+  }
 
-  const resolvedUrl = (() => {
-    let url = BASE_URL + path
-    pathParams.forEach(p => {
-      url = url.replace(`{${p.name}}`, values[`path_${p.name}`] || `:${p.name}`)
-    })
-    const qs = queryParams.map(p => values[`query_${p.name}`] ? `${p.name}=${values[`query_${p.name}`]}` : null).filter(Boolean).join('&')
-    return url + (qs ? '?' + qs : '')
-  })()
-
-  const curlCmd = buildCurl(method, resolvedUrl, token, bodyParams.length > 0 ? JSON.stringify(Object.fromEntries(bodyParams.map(p => [p.name, values[`body_${p.name}`] ?? '']))) : undefined)
+  const statusColor = (s: number) =>
+    s < 300 ? 'text-emerald-500' : s < 500 ? 'text-amber-500' : 'text-red-500'
 
   return (
-    <div className="mt-6 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+    <div className="border border-brand-200 dark:border-brand-800 rounded-lg overflow-hidden mb-8">
       <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        className="w-full flex items-center gap-2 px-4 py-3 bg-brand-50 dark:bg-brand-900/20 text-left"
+        onClick={() => setOpen((o) => !o)}
       >
-        <div className="flex items-center gap-2">
-          <PlayCircle size={16} className="text-blue-500" />
-          <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Try It!</span>
-          <span className="text-xs text-slate-400">— dev API</span>
-        </div>
-        <ChevronDown size={15} className={clsx('text-slate-400 transition-transform', open && 'rotate-180')} />
+        {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+        <span className="text-sm font-semibold text-brand-700 dark:text-brand-400">Try It!</span>
+        <span className="ml-2 text-xs text-brand-500 dark:text-brand-500">
+          Live calls to <strong>dev</strong> API
+        </span>
       </button>
 
       {open && (
-        <div className="divide-y divide-slate-100 dark:divide-slate-700 border-t border-slate-200 dark:border-slate-700">
+        <div className="p-4 space-y-4">
           {/* Auth */}
-          {auth !== 'public' && (
-            <div className="px-4 py-3 flex items-center gap-3">
-              <button
-                onClick={login}
-                disabled={tokenLoading}
-                className="text-sm px-3 py-1.5 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60 flex items-center gap-1.5"
-              >
-                {tokenLoading && <Loader2 size={13} className="animate-spin" />}
-                {token ? 'Re-authenticate' : `Login as ${auth}`}
-              </button>
-              {token && !token.startsWith('ERROR') && (
-                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">✓ Authenticated</span>
+          {auth === 'admin' && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Admin Login
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="email"
+                  className="flex-1 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+                />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="password"
+                  className="flex-1 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+                />
+                <button
+                  onClick={handleLogin}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white rounded transition-colors"
+                >
+                  <LogIn size={13} /> Login
+                </button>
+              </div>
+              {isAuthed && !authError && (
+                <p className="text-xs text-emerald-600 dark:text-emerald-400">Authenticated</p>
               )}
-              {token.startsWith('ERROR') && (
-                <span className="text-xs text-red-500">{token}</span>
-              )}
+              {authError && <p className="text-xs text-red-500">{authError}</p>}
             </div>
           )}
 
           {/* Path params */}
-          {pathParams.length > 0 && (
-            <div className="px-4 py-3">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Path Parameters</p>
-              <div className="space-y-2">
-                {pathParams.map(p => (
-                  <div key={p.name} className="flex items-center gap-2">
-                    <label className="text-sm font-mono text-slate-700 dark:text-slate-300 w-28 shrink-0">{p.name}</label>
-                    <input
-                      type="text"
-                      value={values[`path_${p.name}`] ?? ''}
-                      onChange={e => setValues(v => ({ ...v, [`path_${p.name}`]: e.target.value }))}
-                      placeholder={p.example ? String(p.example) : p.name}
-                      className="flex-1 text-sm px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+          {pathFields.length > 0 && (
+            <FieldGroup
+              title="Path Parameters"
+              fields={pathFields}
+              values={pathValues}
+              onChange={(k, v) => setPathValues((prev) => ({ ...prev, [k]: v }))}
+            />
           )}
 
           {/* Query params */}
-          {queryParams.length > 0 && (
-            <div className="px-4 py-3">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Query Parameters</p>
-              <div className="space-y-2">
-                {queryParams.map(p => (
-                  <div key={p.name} className="flex items-center gap-2">
-                    <label className="text-sm font-mono text-slate-600 dark:text-slate-400 w-28 shrink-0">{p.name}</label>
-                    <input
-                      type={p.type === 'int' || p.type === 'number' ? 'number' : 'text'}
-                      value={values[`query_${p.name}`] ?? ''}
-                      onChange={e => setValues(v => ({ ...v, [`query_${p.name}`]: e.target.value }))}
-                      placeholder={p.example ? String(p.example) : p.default !== undefined ? String(p.default) : ''}
-                      className="flex-1 text-sm px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+          {queryFields.length > 0 && (
+            <FieldGroup
+              title="Query Parameters"
+              fields={queryFields}
+              values={queryValues}
+              onChange={(k, v) => setQueryValues((prev) => ({ ...prev, [k]: v }))}
+            />
           )}
 
-          {/* Body params */}
-          {bodyParams.length > 0 && (
-            <div className="px-4 py-3">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Body</p>
-              <div className="space-y-2">
-                {bodyParams.map(p => (
-                  <div key={p.name} className="flex items-center gap-2">
-                    <label className="text-sm font-mono text-slate-600 dark:text-slate-400 w-28 shrink-0">{p.name}</label>
-                    <input
-                      type="text"
-                      value={values[`body_${p.name}`] ?? ''}
-                      onChange={e => setValues(v => ({ ...v, [`body_${p.name}`]: e.target.value }))}
-                      placeholder={p.example ? String(p.example) : ''}
-                      className="flex-1 text-sm px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* Body */}
+          {bodyFields.length > 0 && (
+            <FieldGroup
+              title="Body"
+              fields={bodyFields}
+              values={bodyValues}
+              onChange={(k, v) => setBodyValues((prev) => ({ ...prev, [k]: v }))}
+            />
           )}
 
-          {/* Send button */}
-          <div className="px-4 py-3 flex items-center gap-3">
-            <button
-              onClick={send}
-              disabled={loading || (auth !== 'public' && !token)}
-              className="text-sm px-4 py-2 rounded-md bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-700 dark:hover:bg-white disabled:opacity-50 flex items-center gap-2 font-semibold"
-            >
-              {loading && <Loader2 size={14} className="animate-spin" />}
-              Send Request
-            </button>
-            <CopyButton text={curlCmd} label="Copy as cURL" />
-          </div>
+          {/* Send */}
+          <button
+            onClick={handleSend}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-medium rounded transition-colors"
+          >
+            <Send size={13} />
+            {loading ? 'Sending…' : 'Send Request'}
+          </button>
 
-          {/* Response */}
-          {response && (
-            <div className="border-t border-slate-200 dark:border-slate-700">
-              <div className="flex items-center justify-between px-4 py-2 bg-slate-800 dark:bg-slate-900">
-                <div className="flex items-center gap-3">
-                  <span className={clsx('text-sm font-semibold font-mono', response.status >= 200 && response.status < 300 ? 'text-emerald-400' : 'text-red-400')}>
-                    {response.status || 'ERROR'}
-                  </span>
-                  <span className="text-xs text-slate-400">{response.ms}ms</span>
-                </div>
-                <CopyButton text={response.body} label="Copy" className="text-slate-400 hover:text-slate-200 dark:hover:text-slate-200" />
+          {/* Result */}
+          {result && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <span className={`text-sm font-bold ${statusColor(result.status)}`}>
+                  {result.status}
+                </span>
+                <span className="text-xs text-slate-500">{result.durationMs}ms</span>
+                <CopyButton text={JSON.stringify(result.body, null, 2)} />
+                {curlStr && (
+                  <CopyButton text={curlStr} />
+                )}
               </div>
-              <pre className="px-4 py-4 text-xs font-mono text-slate-300 bg-slate-800 dark:bg-slate-900 overflow-x-auto max-h-96 leading-relaxed">
-                {response.body}
+              <pre className="code-block text-xs max-h-64 overflow-y-auto">
+                {JSON.stringify(result.body, null, 2)}
               </pre>
             </div>
           )}
         </div>
       )}
+    </div>
+  )
+}
+
+function FieldGroup({
+  title,
+  fields,
+  values,
+  onChange,
+}: {
+  title: string
+  fields: { name: string; type: string; placeholder?: string }[]
+  values: Record<string, string>
+  onChange: (key: string, value: string) => void
+}) {
+  return (
+    <div className="space-y-1.5">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        {title}
+      </p>
+      {fields.map((f) => (
+        <div key={f.name} className="flex items-center gap-2">
+          <label className="w-36 text-xs font-mono text-slate-600 dark:text-slate-400 shrink-0">
+            {f.name}
+          </label>
+          <input
+            type={f.type === 'number' ? 'number' : f.type === 'date' ? 'date' : 'text'}
+            value={values[f.name] ?? ''}
+            onChange={(e) => onChange(f.name, e.target.value)}
+            placeholder={f.placeholder ?? f.name}
+            className="flex-1 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+          />
+        </div>
+      ))}
     </div>
   )
 }

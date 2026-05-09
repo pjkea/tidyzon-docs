@@ -1,0 +1,81 @@
+export interface SearchEntry {
+  title: string
+  method?: string
+  path?: string
+  description?: string
+  href: string
+}
+
+export const searchIndex: SearchEntry[] = [
+  { title: 'Quickstart', href: '/', description: 'Base URL, authentication, response format' },
+  { title: 'Admin Overview', href: '/admin', description: 'Admin API introduction and quick links' },
+
+  // Auth
+  { title: 'Admin Login', method: 'POST', path: '/v1/admin/auth/login', href: '/admin/auth/login', description: 'Authenticate as admin, get JWT tokens' },
+  { title: 'Admin Logout', method: 'POST', path: '/v1/admin/auth/logout', href: '/admin/auth/logout', description: 'Invalidate admin session' },
+  { title: 'Refresh Token', method: 'POST', path: '/v1/admin/auth/refresh', href: '/admin/auth/refresh', description: 'Exchange refresh_token for new id_token' },
+  { title: 'Forgot Password', method: 'POST', path: '/v1/admin/auth/forgot-password', href: '/admin/auth/forgot-password', description: 'Send password reset code to email' },
+  { title: 'Reset Password', method: 'POST', path: '/v1/admin/auth/reset-password', href: '/admin/auth/reset-password', description: 'Complete password reset with verification code' },
+
+  // Users
+  { title: 'List Users', method: 'GET', path: '/v1/admin/users', href: '/admin/users/list', description: 'Paginated list of all customer accounts' },
+  { title: 'Get User Profile', method: 'GET', path: '/v1/admin/users/{userid}', href: '/admin/users/get', description: 'Full profile of a single customer' },
+  { title: 'Update User', method: 'PUT', path: '/v1/admin/users/{userid}', href: '/admin/users/update', description: 'Update customer profile fields' },
+  { title: 'User Summary Cards', method: 'GET', path: '/v1/admin/users/summary', href: '/admin/users/activities', description: 'Aggregate user statistics for dashboard' },
+
+  // Providers
+  { title: 'List Providers', method: 'GET', path: '/v1/admin/providers', href: '/admin/providers/list', description: 'Paginated list of all providers' },
+  { title: 'Get Provider Detail', method: 'GET', path: '/v1/admin/providers/{tidyspid}', href: '/admin/providers/get', description: 'Full profile including vehicle, onboarding, ratings' },
+  { title: 'Provider Summary Cards', method: 'GET', path: '/v1/admin/providers/summary', href: '/admin/providers/activities', description: 'Aggregate provider statistics for dashboard' },
+  { title: 'Provider Location History', method: 'GET', path: '/v1/admin/providers/{tidyspid}/locations', href: '/admin/providers/extras', description: 'Saved locations for a provider' },
+  { title: 'Update Washkit Status', method: 'POST', path: '/v1/admin/providers/washkit/{washkitid}/status', href: '/admin/providers/extras', description: 'Assign or change washkit status' },
+
+  // Provider Onboarding
+  { title: 'Get Provider Documents', method: 'GET', path: '/v1/admin/providers/onboarding/{tidyspid}/documents', href: '/admin/provider-onboarding/documents', description: 'Documents submitted during onboarding' },
+  { title: 'Get Required Document Types', method: 'GET', path: '/v1/admin/providers/required-documents', href: '/admin/provider-onboarding/documents', description: 'Document types providers must submit' },
+  { title: 'Get Onboarding Requirements', method: 'GET', path: '/v1/admin/providers/onboarding/{tidyspid}/requirements', href: '/admin/provider-onboarding/requirements', description: 'Summary of onboarding completion status' },
+  { title: 'Background Check Status', method: 'GET', path: '/v1/admin/providers/onboarding/{tidyspid}/background-check', href: '/admin/provider-onboarding/requirements', description: 'Certn background check status and report' },
+  { title: 'Quiz Results', method: 'GET', path: '/v1/admin/providers/onboarding/{tidyspid}/quiz', href: '/admin/provider-onboarding/requirements', description: 'Provider quiz pass/fail status' },
+  { title: 'Mode of Operation', method: 'GET', path: '/v1/admin/providers/onboarding/{tidyspid}/mode-of-operation', href: '/admin/provider-onboarding/requirements', description: 'Provider service mode selection' },
+  { title: 'Review Onboarding Submission', method: 'POST', path: '/v1/admin/providers/onboarding/review', href: '/admin/provider-onboarding/review', description: 'Approve or reject provider documents' },
+
+  // Requests
+  { title: 'List Requests', method: 'GET', path: '/v1/admin/requests', href: '/admin/requests/list', description: 'Paginated list of service requests' },
+  { title: 'Get Request Detail', method: 'GET', path: '/v1/admin/requests/{requestid}', href: '/admin/requests/get', description: 'Full detail including assets, provider, pricing' },
+  { title: 'Request Overview & Receipt', method: 'GET', path: '/v1/admin/requests/{requestid}', href: '/admin/requests/overview', description: 'Itemised receipt and pricing breakdown' },
+  { title: 'Request Status Timeline', method: 'GET', path: '/v1/admin/requests/{requestid}/timeline', href: '/admin/requests/timeline', description: 'Chronological status transition log' },
+  { title: 'Wash Uploads', method: 'GET', path: '/v1/admin/requests/{requestid}/uploads', href: '/admin/requests/uploads', description: 'Before and after wash photos' },
+
+  // Payments
+  { title: 'List Payments', method: 'GET', path: '/v1/admin/payments', href: '/admin/payments/list', description: 'All payment records' },
+  { title: 'Get Payment', method: 'GET', path: '/v1/admin/payments/{paymentid}', href: '/admin/payments/get', description: 'Single payment record detail' },
+
+  // Transactions
+  { title: 'List Transactions', method: 'GET', path: '/v1/admin/transactions', href: '/admin/transactions/list', description: 'Provider financial transactions' },
+  { title: 'Get Transaction', method: 'GET', path: '/v1/admin/transactions/{transactionid}', href: '/admin/transactions/get', description: 'Single transaction detail' },
+  { title: 'Create Transaction', method: 'POST', path: '/v1/admin/transactions', href: '/admin/transactions/create', description: 'Manual payout, credit, or deduction' },
+
+  // Statements
+  { title: 'List Statements', method: 'GET', path: '/v1/admin/statements', href: '/admin/statements/list', description: 'Provider payout statements' },
+  { title: 'Get Statement', method: 'GET', path: '/v1/admin/statements/{statementid}', href: '/admin/statements/get', description: 'Statement with all transaction detail' },
+  { title: 'Create Statement', method: 'POST', path: '/v1/admin/statements', href: '/admin/statements/create', description: 'Create payout statement for a provider' },
+  { title: 'Mark Statement Paid / Pending', method: 'PUT', path: '/v1/admin/statements/{statementid}/mark-paid', href: '/admin/statements/mark', description: 'Update statement payment status' },
+
+  // Notifications
+  { title: 'List Notifications', method: 'GET', path: '/v1/admin/notifications', href: '/admin/notifications/list', description: 'All push notification records' },
+  { title: 'Create Notification', method: 'POST', path: '/v1/admin/notifications', href: '/admin/notifications/send', description: 'Create a notification draft' },
+  { title: 'Send Notification', method: 'POST', path: '/v1/admin/notifications/{notificationid}/send', href: '/admin/notifications/send', description: 'Immediately dispatch a notification' },
+  { title: 'Schedule Notification', method: 'POST', path: '/v1/admin/notifications/{notificationid}/schedule', href: '/admin/notifications/send', description: 'Schedule a notification for future delivery' },
+  { title: 'Delete Notification', method: 'DELETE', path: '/v1/admin/notifications/{notificationid}', href: '/admin/notifications/delete', description: 'Delete a draft or cancelled notification' },
+
+  // Service Types
+  { title: 'List Service Types', method: 'GET', path: '/v1/admin/service-types', href: '/admin/service-types/list', description: 'All service packages' },
+  { title: 'Get Service Type', method: 'GET', path: '/v1/admin/service-types/{servicetypeid}', href: '/admin/service-types/get', description: 'Single service type detail' },
+  { title: 'Create / Update Service Type', method: 'POST', path: '/v1/admin/service-types', href: '/admin/service-types/create', description: 'Create or update service packages' },
+  { title: 'Delete Service Type', method: 'DELETE', path: '/v1/admin/service-types/{servicetypeid}', href: '/admin/service-types/delete', description: 'Remove a service type' },
+
+  // Other
+  { title: 'Locations', method: 'GET', path: '/v1/admin/locations', href: '/admin/locations', description: 'All saved service locations' },
+  { title: 'Document Types', method: 'GET', path: '/v1/admin/providers/required-documents', href: '/admin/document-types', description: 'Provider onboarding document type definitions' },
+  { title: 'Admin Profile', method: 'GET', path: '/v1/admin/profile', href: '/admin/profile', description: 'Profile of the authenticated admin user' },
+]

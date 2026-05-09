@@ -1,8 +1,0 @@
-{
-  "index": "Get Started",
-  "packages": "GET Packages",
-  "extra-services": "GET Extra Services",
-  "promo-codes": "POST Validate Promo Code",
-  "terms": "GET Terms",
-  "contact": "POST Contact"
-}

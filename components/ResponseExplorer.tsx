@@ -1,150 +1,137 @@
 'use client'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { CopyButton } from './CopyButton'
-import clsx from 'clsx'
 
 export interface ResponseField {
   name: string
   type: string
   description?: string
-  nullable?: boolean
   fields?: ResponseField[]
 }
 
-interface FieldRowProps {
-  field: ResponseField
-  depth?: number
+export interface ResponseEntry {
+  status: number
+  label?: string
+  description?: string
+  fields?: ResponseField[]
+  sample?: string
 }
 
-function FieldRow({ field, depth = 0 }: FieldRowProps) {
+interface ResponseExplorerProps {
+  responses: ResponseEntry[]
+}
+
+function FieldRow({ field, depth = 0 }: { field: ResponseField; depth?: number }) {
   const [open, setOpen] = useState(false)
   const hasChildren = field.fields && field.fields.length > 0
+  const indent = depth * 16
 
   return (
     <>
       <div
-        className={clsx(
-          'flex items-start gap-2 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50',
-          depth > 0 && 'border-l-2 border-slate-100 dark:border-slate-700'
-        )}
-        style={{ paddingLeft: `${16 + depth * 20}px` }}
+        className="flex items-start gap-2 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 last:border-0"
+        style={{ paddingLeft: `${16 + indent}px` }}
       >
-        {hasChildren && (
+        {hasChildren ? (
           <button
-            onClick={() => setOpen(o => !o)}
-            className="shrink-0 mt-0.5 text-slate-400"
+            onClick={() => setOpen((o) => !o)}
+            className="mt-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 shrink-0"
           >
-            {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
           </button>
+        ) : (
+          <span className="w-[13px] shrink-0" />
         )}
-        {!hasChildren && <span className="w-3.5 shrink-0" />}
         <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <code className="text-sm font-semibold text-slate-800 dark:text-slate-200">{field.name}</code>
-            <span className="text-xs text-slate-500">{field.type}</span>
-            {field.nullable && <span className="text-xs text-slate-400">nullable</span>}
+          <div className="flex items-center gap-2">
+            <code className="text-sm font-mono font-medium text-slate-900 dark:text-slate-100">
+              {field.name}
+            </code>
+            <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded font-mono">
+              {field.type}
+            </span>
           </div>
           {field.description && (
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">{field.description}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{field.description}</p>
           )}
         </div>
       </div>
-      {open && hasChildren && field.fields!.map(f => (
+      {open && hasChildren && field.fields!.map((f) => (
         <FieldRow key={f.name} field={f} depth={depth + 1} />
       ))}
     </>
   )
 }
 
-interface StatusTabProps {
-  code: number | string
-  active: boolean
-  onClick: () => void
+function statusColor(status: number) {
+  if (status < 300) return 'text-emerald-600 dark:text-emerald-400'
+  if (status < 500) return 'text-amber-600 dark:text-amber-400'
+  return 'text-red-600 dark:text-red-400'
 }
 
-function StatusTab({ code, active, onClick }: StatusTabProps) {
-  const color = String(code).startsWith('2')
-    ? 'text-emerald-600 dark:text-emerald-400'
-    : String(code).startsWith('4')
-    ? 'text-amber-600 dark:text-amber-400'
-    : 'text-red-600 dark:text-red-400'
+export function ResponseExplorer({ responses }: ResponseExplorerProps) {
+  const [activeIdx, setActiveIdx] = useState(0)
+  const [showSample, setShowSample] = useState(false)
+  const active = responses[activeIdx]
 
   return (
-    <button
-      onClick={onClick}
-      className={clsx(
-        'px-3 py-1.5 text-sm font-mono font-semibold rounded-md transition-all',
-        active
-          ? 'bg-slate-100 dark:bg-slate-700 ' + color
-          : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
-      )}
-    >
-      {code}
-    </button>
-  )
-}
-
-interface ResponseTabContent {
-  status: number | string
-  description?: string
-  fields?: ResponseField[]
-  sample?: object | string
-}
-
-interface Props {
-  responses: ResponseTabContent[]
-}
-
-export function ResponseExplorer({ responses }: Props) {
-  const [active, setActive] = useState(0)
-  const current = responses[active]
-
-  const sampleStr = current.sample
-    ? typeof current.sample === 'string'
-      ? current.sample
-      : JSON.stringify(current.sample, null, 2)
-    : null
-
-  return (
-    <div className="mt-8">
-      <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">Responses</h2>
-      <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
-        {/* Status tabs */}
-        <div className="flex items-center gap-1 px-4 py-2 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+    <div className="mb-8">
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-3">
+        Responses
+      </h3>
+      <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+        {/* Tab bar */}
+        <div className="flex border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
           {responses.map((r, i) => (
-            <StatusTab key={i} code={r.status} active={i === active} onClick={() => setActive(i)} />
+            <button
+              key={i}
+              onClick={() => setActiveIdx(i)}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                i === activeIdx
+                  ? 'border-brand-500 text-brand-600 dark:text-brand-400 bg-white dark:bg-slate-800'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+            >
+              <span className={statusColor(r.status)}>{r.status}</span>
+              {r.label && <span className="ml-1.5 text-slate-400">{r.label}</span>}
+            </button>
           ))}
+          <div className="flex-1" />
+          {active?.sample && (
+            <button
+              onClick={() => setShowSample((s) => !s)}
+              className="px-4 py-2.5 text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+            >
+              {showSample ? 'Hide sample' : 'View sample'}
+            </button>
+          )}
         </div>
 
         {/* Description */}
-        {current.description && (
-          <p className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
-            {current.description}
-          </p>
+        {active?.description && (
+          <div className="px-4 py-2 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 text-sm text-slate-600 dark:text-slate-400">
+            {active.description}
+          </div>
         )}
 
-        {/* Response fields */}
-        {current.fields && current.fields.length > 0 && (
+        {/* Field tree */}
+        {!showSample && active?.fields && active.fields.length > 0 && (
           <div>
-            <p className="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide border-b border-slate-100 dark:border-slate-700">
-              Response Body
-            </p>
-            <div className="divide-y divide-slate-100 dark:divide-slate-700/50">
-              {current.fields.map(f => <FieldRow key={f.name} field={f} />)}
-            </div>
+            {active.fields.map((f) => (
+              <FieldRow key={f.name} field={f} />
+            ))}
           </div>
         )}
 
         {/* Sample JSON */}
-        {sampleStr && (
-          <div className="border-t border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between px-4 py-2 bg-slate-800 dark:bg-slate-900">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Sample Response</span>
-              <CopyButton text={sampleStr} label="Copy" className="text-slate-400 hover:text-slate-200" />
+        {showSample && active?.sample && (
+          <div className="relative">
+            <div className="absolute top-2 right-2 z-10">
+              <CopyButton text={active.sample} />
             </div>
-            <pre className="px-4 py-4 text-sm font-mono text-slate-300 bg-slate-800 dark:bg-slate-900 overflow-x-auto leading-relaxed">
-              {sampleStr}
+            <pre className="code-block rounded-none text-xs overflow-x-auto max-h-96 overflow-y-auto">
+              {active.sample}
             </pre>
           </div>
         )}
