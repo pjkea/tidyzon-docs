@@ -56,6 +56,41 @@ export default function LocationsPage() {
         <ResponseExplorer
           responses={[{
             status: 200, label: 'OK',
+            sample: `{
+  "providers": [
+    {
+      "id": "494",
+      "entityType": "provider",
+      "name": "Joseph Ansah",
+      "email": "jkessiful@gmail.com",
+      "phone": "+10249795541",
+      "serviceType": null,
+      "location": null,
+      "status": "online",
+      "verified": false,
+      "rating": null,
+      "completedJobs": 0,
+      "joinDate": "April 28, 2026 06:44 PM",
+      "lastActive": "April 28, 2026 06:44 PM",
+      "lastPing": "May 12, 2026 01:39 PM",
+      "coordinates": { "lat": 5.5578941, "lng": -0.2674326 }
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "entityType": "user",
+      "name": "Randy Odoom",
+      "email": "randyodoom19@gmail.com",
+      "phone": "+11273787677",
+      "location": null,
+      "status": "offline",
+      "joinDate": "February 23, 2026 09:52 AM",
+      "lastActive": "March 22, 2026 08:48 PM",
+      "coordinates": { "lat": 5.714167, "lng": -0.15418 }
+    }
+  ]
+}`,
             fields: [
               { name: 'providers', type: 'array', fields: providerLocationFields },
               { name: 'users', type: 'array', fields: userLocationFields },
@@ -84,6 +119,23 @@ export default function LocationsPage() {
         <ResponseExplorer
           responses={[{
             status: 200, label: 'OK',
+            sample: `{
+  "id": "494",
+  "entityType": "provider",
+  "name": "Joseph Ansah",
+  "email": "jkessiful@gmail.com",
+  "phone": "+10249795541",
+  "serviceType": null,
+  "location": null,
+  "status": "online",
+  "verified": false,
+  "rating": null,
+  "completedJobs": 0,
+  "joinDate": "April 28, 2026 06:44 PM",
+  "lastActive": "April 28, 2026 06:44 PM",
+  "lastPing": "May 12, 2026 01:39 PM",
+  "coordinates": { "lat": 5.5578941, "lng": -0.2674326 }
+}`,
             fields: [
               { name: '(provider or user location object)', type: 'object', description: 'Same shape as provider or user entry in /v1/admin/locations' },
             ],
@@ -111,6 +163,22 @@ export default function LocationsPage() {
         <ResponseExplorer
           responses={[{
             status: 200, label: 'OK',
+            sample: `{
+  "users": [
+    {
+      "id": "1",
+      "entityType": "user",
+      "name": "Randy Odoom",
+      "email": "randyodoom19@gmail.com",
+      "phone": "+11273787677",
+      "location": null,
+      "status": "offline",
+      "joinDate": "February 23, 2026 09:52 AM",
+      "lastActive": "March 22, 2026 08:48 PM",
+      "coordinates": { "lat": 5.714167, "lng": -0.15418 }
+    }
+  ]
+}`,
             fields: [
               { name: 'users', type: 'array', fields: userLocationFields },
             ],
@@ -138,6 +206,27 @@ export default function LocationsPage() {
         <ResponseExplorer
           responses={[{
             status: 200, label: 'OK',
+            sample: `{
+  "providers": [
+    {
+      "id": "494",
+      "entityType": "provider",
+      "name": "Joseph Ansah",
+      "email": "jkessiful@gmail.com",
+      "phone": "+10249795541",
+      "serviceType": null,
+      "location": null,
+      "status": "online",
+      "verified": false,
+      "rating": null,
+      "completedJobs": 0,
+      "joinDate": "April 28, 2026 06:44 PM",
+      "lastActive": "April 28, 2026 06:44 PM",
+      "lastPing": "May 12, 2026 01:39 PM",
+      "coordinates": { "lat": 5.5578941, "lng": -0.2674326 }
+    }
+  ]
+}`,
             fields: [
               { name: 'providers', type: 'array', fields: providerLocationFields },
             ],

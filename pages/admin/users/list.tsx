@@ -33,6 +33,31 @@ export default function ListUsersPage() {
           {
             status: 200,
             label: 'OK',
+            sample: `{
+  "users": [
+    {
+      "userid": 1776,
+      "email": "winomo7965@inraud.com",
+      "firstname": "Track",
+      "lastname": "Me",
+      "phonenumber": "+15211223366",
+      "roleid": 1,
+      "role_name": "User",
+      "isactive": 1,
+      "status": "active",
+      "since": "May 07, 2026 04:14 PM",
+      "avg_rating": "new",
+      "createdat": "May 01, 2026 07:20 PM",
+      "last_active": "May 07, 2026 04:14 PM"
+    }
+  ],
+  "pagination": {
+    "total": 24,
+    "page": 1,
+    "limit": 10,
+    "total_pages": 3
+  }
+}`,
             fields: [
               { name: 'message', type: 'string' },
               {

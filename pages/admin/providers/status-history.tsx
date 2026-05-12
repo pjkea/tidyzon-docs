@@ -55,6 +55,27 @@ export default function ProviderStatusHistoryPage() {
             {
               status: 200,
               label: 'OK',
+              sample: `{
+  "message": "Provider status history retrieved successfully",
+  "data": [
+    {
+      "id": 1,
+      "tidyspid": 494,
+      "provider_name": "Joseph Ansah",
+      "review_type": "document",
+      "reference_id": 12,
+      "old_status_id": 1,
+      "old_status_name": "pending",
+      "new_status_id": 2,
+      "new_status_name": "approved",
+      "review_notes": "Documents verified and approved.",
+      "reviewed_by": 9,
+      "reviewer_name": "Kwamena Essiful-Ansah",
+      "reviewedat": "April 30, 2026 11:00 AM"
+    }
+  ],
+  "pagination": { "total": 3, "page": 1, "page_size": 20, "pages": 1 }
+}`,
               fields: [
                 { name: 'message', type: 'string' },
                 { name: 'data', type: 'array', fields: historyItemFields },
@@ -95,6 +116,24 @@ export default function ProviderStatusHistoryPage() {
             {
               status: 200,
               label: 'OK',
+              sample: `{
+  "message": "Provider status history retrieved successfully",
+  "data": {
+    "id": 1,
+    "tidyspid": 494,
+    "provider_name": "Joseph Ansah",
+    "review_type": "document",
+    "reference_id": 12,
+    "old_status_id": 1,
+    "old_status_name": "pending",
+    "new_status_id": 2,
+    "new_status_name": "approved",
+    "review_notes": "Documents verified and approved.",
+    "reviewed_by": 9,
+    "reviewer_name": "Kwamena Essiful-Ansah",
+    "reviewedat": "April 30, 2026 11:00 AM"
+  }
+}`,
               fields: [
                 { name: 'message', type: 'string' },
                 { name: 'data', type: 'object', fields: historyItemFields },
@@ -137,6 +176,27 @@ export default function ProviderStatusHistoryPage() {
             {
               status: 200,
               label: 'OK',
+              sample: `{
+  "message": "Provider status history retrieved successfully",
+  "data": [
+    {
+      "id": 1,
+      "tidyspid": 494,
+      "provider_name": "Joseph Ansah",
+      "review_type": "document",
+      "reference_id": 12,
+      "old_status_id": 1,
+      "old_status_name": "pending",
+      "new_status_id": 2,
+      "new_status_name": "approved",
+      "review_notes": "Documents verified and approved.",
+      "reviewed_by": 9,
+      "reviewer_name": "Kwamena Essiful-Ansah",
+      "reviewedat": "April 30, 2026 11:00 AM"
+    }
+  ],
+  "pagination": { "total": 3, "page": 1, "page_size": 20, "pages": 1 }
+}`,
               fields: [
                 { name: 'message', type: 'string' },
                 { name: 'data', type: 'array', fields: historyItemFields },

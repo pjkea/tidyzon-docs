@@ -25,6 +25,7 @@ export default function ManageAdminUserPage() {
             {
               status: 200,
               label: 'OK',
+              sample: `{ "message": "Admin user disabled successfully" }`,
               fields: [{ name: 'message', type: 'string' }],
             },
             { status: 404, label: 'Not Found' },
@@ -54,6 +55,7 @@ export default function ManageAdminUserPage() {
             {
               status: 200,
               label: 'OK',
+              sample: `{ "message": "Admin user enabled successfully" }`,
               fields: [{ name: 'message', type: 'string' }],
             },
             { status: 404, label: 'Not Found' },
@@ -83,6 +85,7 @@ export default function ManageAdminUserPage() {
             {
               status: 200,
               label: 'OK',
+              sample: `{ "message": "Admin user downgraded to customer successfully" }`,
               fields: [{ name: 'message', type: 'string' }],
             },
             { status: 404, label: 'Not Found' },

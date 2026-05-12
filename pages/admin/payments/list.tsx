@@ -32,6 +32,24 @@ export default function ListPaymentsPage() {
           {
             status: 200,
             label: 'OK',
+            sample: `{
+  "message": "Payments retrieved successfully",
+  "data": {
+    "payments": [
+      {
+        "paymentid": 10,
+        "orderid": 5,
+        "amount": 41.12,
+        "status": "completed",
+        "paymentgateway": "stripe",
+        "transactionid": "txn_abc123",
+        "createdat": "May 12, 2026 01:45 PM"
+      }
+    ],
+    "pagination": { "limit": 20, "offset": 0, "total_count": 1, "returned_count": 1 },
+    "statistics": { "total_transactions": 1, "total_amount": 41.12, "average_amount": 41.12 }
+  }
+}`,
             fields: [
               { name: 'message', type: 'string' },
               {

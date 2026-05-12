@@ -38,6 +38,22 @@ export default function UpdateAdminUserPage() {
           {
             status: 200,
             label: 'OK',
+            sample: `{
+  "message": "Admin user updated successfully",
+  "data": {
+    "userid": 9,
+    "email": "nsafulansahk@gmail.com",
+    "roleid": 5,
+    "rolename": "Super Admin",
+    "isactive": 1,
+    "firstname": "Kwamena",
+    "lastname": "Essiful-Ansah",
+    "full_name": "Kwamena Essiful-Ansah",
+    "city": "Atlanta",
+    "state": "Georgia",
+    "updatedat": "May 12, 2026 10:00 AM"
+  }
+}`,
             fields: [
               { name: 'message', type: 'string' },
               { name: 'data', type: 'object', description: 'Updated admin user object' },

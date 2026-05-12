@@ -27,6 +27,22 @@ export default function ListStatementsPage() {
       <ResponseExplorer
         responses={[{
           status: 200, label: 'OK',
+          sample: `{
+  "message": "Statements retrieved successfully",
+  "data": [
+    {
+      "statementid": "monthly-2026-04",
+      "tidyspid": 494,
+      "provider_name": "Joseph Ansah",
+      "period_start": "2026-04-01",
+      "period_end": "2026-04-30",
+      "total_amount": 210.50,
+      "status": "paid",
+      "createdat": "May 01, 2026 09:00 AM"
+    }
+  ],
+  "pagination": { "total": 1, "page": 1, "page_size": 20, "pages": 1 }
+}`,
           fields: [
             { name: 'message', type: 'string' },
             {

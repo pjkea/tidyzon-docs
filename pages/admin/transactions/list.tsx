@@ -31,6 +31,21 @@ export default function ListTransactionsPage() {
           {
             status: 200,
             label: 'OK',
+            sample: `{
+  "transactions": [
+    {
+      "transactionid": 1,
+      "tidyspid": 494,
+      "provider_name": "Joseph Ansah",
+      "type": "payout",
+      "amount": 35.00,
+      "status": "completed",
+      "description": "Weekly payout",
+      "createdat": "May 10, 2026 12:00 PM"
+    }
+  ],
+  "pagination": { "currentPage": 1, "totalCount": 1, "totalPages": 1, "limit": 20 }
+}`,
             fields: [
               { name: 'message', type: 'string' },
               {

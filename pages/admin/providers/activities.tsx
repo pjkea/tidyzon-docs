@@ -21,6 +21,22 @@ export default function ProviderActivitiesPage() {
             {
               status: 200,
               label: 'OK',
+              sample: `{
+  "message": "Provider summary retrieved successfully",
+  "data": {
+    "total_providers": 13,
+    "active_providers": 8,
+    "inactive_providers": 5,
+    "verified_providers": 0,
+    "pending_verification": 13,
+    "new_providers_last_30_days": 5,
+    "average_rating": 0.0,
+    "availability_distribution": [
+      { "status": "Available", "count": 8 },
+      { "status": "Unavailable", "count": 5 }
+    ]
+  }
+}`,
               fields: [
                 { name: 'message', type: 'string' },
                 {
@@ -69,6 +85,25 @@ export default function ProviderActivitiesPage() {
             {
               status: 200,
               label: 'OK',
+              sample: `{
+  "message": "Provider activities retrieved successfully",
+  "data": [
+    {
+      "activity_id": 1,
+      "activity_type": "order",
+      "tidyspid": 494,
+      "provider_name": "Joseph Ansah",
+      "reference_id": 1,
+      "status": 3,
+      "status_name": "completed",
+      "address": "376G+P3C, Techiman-Tamale Rd, Kintampo, Ghana",
+      "source": "order",
+      "scheduleddatetime": null,
+      "createdat": "May 12, 2026 01:41 PM"
+    }
+  ],
+  "pagination": { "total": 6, "page": 1, "page_size": 20, "pages": 1 }
+}`,
               fields: [
                 { name: 'message', type: 'string' },
                 {

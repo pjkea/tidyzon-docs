@@ -29,6 +29,20 @@ export default function CreateAdminUserPage() {
           {
             status: 201,
             label: 'Created',
+            sample: `{
+  "message": "User upgraded to admin successfully",
+  "data": {
+    "userid": 45,
+    "email": "john.doe@example.com",
+    "roleid": 4,
+    "rolename": "Admin",
+    "isactive": 1,
+    "firstname": "John",
+    "lastname": "Doe",
+    "full_name": "John Doe",
+    "createdat": "May 12, 2026 09:00 AM"
+  }
+}`,
             fields: [
               { name: 'message', type: 'string' },
               {

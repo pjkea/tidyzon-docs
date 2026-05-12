@@ -18,6 +18,29 @@ export default function AdminProfilePage() {
       <ResponseExplorer
         responses={[{
           status: 200, label: 'OK',
+          sample: `{
+  "message": "Profile loaded successfully",
+  "user": {
+    "userid": 9,
+    "email": "nsafulansahk@gmail.com",
+    "username": "nsafulansahk@gmail.com",
+    "firstname": "Kwamena",
+    "lastname": "Essiful-Ansah",
+    "phonenumber": "+233249795541",
+    "roleid": 5,
+    "rolename": "Super Admin",
+    "address": {
+      "streetaddress1": "265 Peachtree Center Ave NE, Atlanta, GA 30303, USA",
+      "city": "Illinois",
+      "state": "Chicago",
+      "countryid": 1
+    },
+    "permissions": [
+      "view_users", "edit_users", "manage_settings", "delete_users",
+      "manage_roles", "view_requests", "manage_providers"
+    ]
+  }
+}`,
           fields: [
             { name: 'message', type: 'string' },
             {

@@ -32,6 +32,28 @@ export default function ListAdminUsersPage() {
           {
             status: 200,
             label: 'OK',
+            sample: `{
+  "message": "Admin users retrieved successfully",
+  "data": [
+    {
+      "userid": 9,
+      "email": "nsafulansahk@gmail.com",
+      "roleid": 5,
+      "rolename": "Super Admin",
+      "isactive": 1,
+      "firstname": "Kwamena",
+      "lastname": "Essiful-Ansah",
+      "full_name": "Kwamena Essiful-Ansah",
+      "phonenumber": "+233249795541",
+      "profileimageurl": null,
+      "city": "Illinois",
+      "state": "Chicago",
+      "createdat": "February 24, 2026 09:36 AM",
+      "updatedat": "May 12, 2026 09:40 AM"
+    }
+  ],
+  "pagination": { "total": 1, "page": 1, "page_size": 20, "pages": 1 }
+}`,
             fields: [
               { name: 'message', type: 'string' },
               {

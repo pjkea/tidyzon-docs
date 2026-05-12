@@ -28,6 +28,46 @@ export default function RequestTimelinePage() {
           {
             status: 200,
             label: 'OK',
+            sample: `{
+  "message": "Request timeline retrieved successfully",
+  "request": {
+    "requestid": 1,
+    "current_status": 8,
+    "address": "376G+P3C, Techiman-Tamale Rd, Kintampo, Ghana",
+    "createdat": "May 12, 2026 01:41 PM"
+  },
+  "timeline": [
+    {
+      "id": 1,
+      "requestid": 1,
+      "status": "pending",
+      "status_name": "pending",
+      "changedat": "May 12, 2026 01:41 PM",
+      "changedby_userid": null,
+      "changedby_name": null,
+      "changedby_role": null,
+      "provider_tidyspid": null,
+      "provider_name": null,
+      "reason": null,
+      "metadata": null
+    },
+    {
+      "id": 2,
+      "requestid": 1,
+      "status": "assigned",
+      "status_name": "assigned",
+      "changedat": "May 12, 2026 01:41 PM",
+      "changedby_userid": 1,
+      "changedby_name": "Randy Odoom",
+      "changedby_role": "provider",
+      "provider_tidyspid": 1,
+      "provider_name": "Randy Odoom",
+      "reason": "A1",
+      "metadata": { "attempt": 1, "tidyspid": 1, "response_status": "ACCEPTED" }
+    }
+  ],
+  "total_events": 4
+}`,
             fields: [
               { name: 'message', type: 'string' },
               {

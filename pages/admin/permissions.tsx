@@ -27,6 +27,21 @@ export default function PermissionsPage() {
             {
               status: 200,
               label: 'OK',
+              sample: `{
+  "message": "Permissions retrieved successfully",
+  "data": [
+    {
+      "roleid": 4,
+      "rolename": "Admin",
+      "permissions": {
+        "manage_admin_users": { "isallowed": false, "updatedat": "April 09, 2026 04:05 PM" },
+        "manage_notifications": { "isallowed": true, "updatedat": "April 09, 2026 04:05 PM" },
+        "manage_payments": { "isallowed": true, "updatedat": "April 09, 2026 04:05 PM" },
+        "manage_users": { "isallowed": true, "updatedat": "April 09, 2026 04:05 PM" }
+      }
+    }
+  ]
+}`,
               fields: [
                 { name: 'message', type: 'string' },
                 {
@@ -71,6 +86,14 @@ export default function PermissionsPage() {
             {
               status: 200,
               label: 'OK',
+              sample: `{
+  "message": "Permissions updated successfully",
+  "roleid": 4,
+  "rolename": "Admin",
+  "updated": [
+    { "permission_key": "manage_notifications", "isallowed": true, "updatedat": "May 12, 2026 10:00 AM" }
+  ]
+}`,
               fields: [
                 { name: 'message', type: 'string' },
                 { name: 'roleid', type: 'integer' },

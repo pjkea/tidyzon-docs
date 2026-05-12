@@ -35,6 +35,41 @@ export default function ListRequestsPage() {
           {
             status: 200,
             label: 'OK',
+            sample: `{
+  "message": "Requests retrieved successfully",
+  "data": {
+    "requests": [
+      {
+        "request_id": 1,
+        "service_types": ["Car Wash"],
+        "status": 6,
+        "status_name": "en_route",
+        "status_description": "Provider is heading to the service location.",
+        "price": 41.12,
+        "datetime": "May 12, 2026 01:41 PM",
+        "is_scheduled": false,
+        "created_at": "May 12, 2026 01:41 PM",
+        "rating": null,
+        "location": {
+          "address": "376G+P3C, Techiman-Tamale Rd, Kintampo, Ghana",
+          "latitude": 8.061811,
+          "longitude": -1.724847
+        },
+        "customer": {
+          "user_id": 2,
+          "name": "Otabil Odoom",
+          "number": "+11234567891"
+        },
+        "provider": {
+          "tidysp_id": 1,
+          "name": "Randy Odoom"
+        }
+      }
+    ],
+    "pagination": { "limit": 10, "offset": 0, "total_count": 1, "returned_count": 1 },
+    "statistics": { "total_requests": 1, "average_price": 41.12 }
+  }
+}`,
             fields: [
               { name: 'message', type: 'string' },
               {

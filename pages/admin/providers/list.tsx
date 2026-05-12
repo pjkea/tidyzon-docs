@@ -34,6 +34,31 @@ export default function ListProvidersPage() {
           {
             status: 200,
             label: 'OK',
+            sample: `{
+  "providers": [
+    {
+      "tidyspid": 494,
+      "isbackgroundverified": false,
+      "isequipmentverified": false,
+      "isavailable": 1,
+      "status": "active",
+      "avg_rating": "new",
+      "lastavailabilityupdate": "May 12, 2026 01:39 PM",
+      "createdat": "April 28, 2026 06:44 PM",
+      "last_active": "May 12, 2026 01:39 PM",
+      "user": {
+        "userid": 1770,
+        "email": "jkessiful@gmail.com",
+        "firstname": "Joseph",
+        "lastname": "Ansah",
+        "phonenumber": "+10249795541",
+        "isactive": 1
+      },
+      "address": null
+    }
+  ],
+  "pagination": { "total": 13, "page": 1, "limit": 10, "total_pages": 2 }
+}`,
             fields: [
               { name: 'message', type: 'string' },
               {

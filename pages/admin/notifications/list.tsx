@@ -49,6 +49,26 @@ export default function ListNotificationsPage() {
         <ResponseExplorer
           responses={[{
             status: 200, label: 'OK',
+            sample: `{
+  "notifications": [
+    {
+      "id": 2,
+      "title": "Test Notification",
+      "message": "New Notification test",
+      "userType": "system",
+      "target": "system",
+      "targetIds": null,
+      "status": "delivered",
+      "scheduledAt": null,
+      "sentAt": "2026-02-28T20:01:03.585664",
+      "priority": "high",
+      "clickAction": null,
+      "imageUrl": null,
+      "deliveryStats": { "total": 1, "delivered": 1, "failed": 0 }
+    }
+  ],
+  "pagination": { "currentPage": 1, "totalCount": 2, "totalPages": 2, "limit": 20 }
+}`,
             fields: [
               {
                 name: 'notifications', type: 'array', fields: notificationFields,
@@ -90,6 +110,22 @@ export default function ListNotificationsPage() {
         <ResponseExplorer
           responses={[{
             status: 200, label: 'OK',
+            sample: `{
+  "message": "Notification retrieved successfully",
+  "id": 2,
+  "title": "Test Notification",
+  "message": "New Notification test",
+  "userType": "system",
+  "target": "system",
+  "targetIds": null,
+  "status": "delivered",
+  "scheduledAt": null,
+  "sentAt": "2026-02-28T20:01:03.585664",
+  "priority": "high",
+  "clickAction": null,
+  "imageUrl": null,
+  "deliveryStats": { "total": 1, "delivered": 1, "failed": 0 }
+}`,
             fields: notificationFields,
           }]}
         />

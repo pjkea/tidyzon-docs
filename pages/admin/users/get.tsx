@@ -28,6 +28,42 @@ export default function GetUserPage() {
           {
             status: 200,
             label: 'OK',
+            sample: `{
+  "message": "User profile retrieved successfully",
+  "data": {
+    "user_id": 1,
+    "username": "randyodoom19@gmail.com",
+    "email": "randyodoom19@gmail.com",
+    "role": { "role_id": 1, "role_name": "User" },
+    "is_active": 1,
+    "created_at": "February 23, 2026 09:52 AM",
+    "updated_at": "May 10, 2026 10:50 PM",
+    "statistics": {
+      "account_period": "2 Months",
+      "completed_services": "New",
+      "avg_rating": "new"
+    },
+    "details": {
+      "first_name": "Randy",
+      "last_name": "Odoom",
+      "phone_number": "+11273787677",
+      "address": {
+        "street_address_1": null,
+        "city": null,
+        "state": null,
+        "country_id": 3,
+        "formatted_address": null,
+        "latitude": null,
+        "longitude": null
+      },
+      "verification": {
+        "email_verified": true,
+        "phone_verified": false
+      }
+    },
+    "recent_requests": []
+  }
+}`,
             fields: [
               { name: 'message', type: 'string' },
               {
