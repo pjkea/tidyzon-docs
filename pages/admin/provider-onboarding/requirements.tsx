@@ -25,7 +25,7 @@ export default function OnboardingRequirementsPage() {
           responses={[{
             status: 200, label: 'OK',
             sample: `{
-  "tidyspid": 1,
+  "tidyspid": 223,
   "service_products": [
     { "product_id": 1, "name": "Speed Wash kit", "is_selected": true },
     { "product_id": 2, "name": "Deluxe Wash kit", "is_selected": false },
@@ -53,6 +53,22 @@ export default function OnboardingRequirementsPage() {
               "min_upload_count": 1,
               "max_upload_count": 1,
               "is_required": true,
+              "media": [
+                {
+                  "requirement_item_id": 4,
+                  "media_url": "https://d2sgegy2mkmevd.cloudfront.net/app/shared/general/required_documents/tidyzon_required_kit/basic_wash_kit/exterior/25_inch_long_handle_car_wash_mop_kit_1.png",
+                  "media_type": "image",
+                  "title": null,
+                  "displayorder": 1
+                },
+                {
+                  "requirement_item_id": 4,
+                  "media_url": "https://d2sgegy2mkmevd.cloudfront.net/app/shared/general/required_documents/tidyzon_required_kit/basic_wash_kit/exterior/25_inch_long_handle_car_wash_mop_kit_2.png",
+                  "media_type": "image",
+                  "title": null,
+                  "displayorder": 2
+                }
+              ],
               "submissions": [
                 {
                   "id": 1,
@@ -87,6 +103,15 @@ export default function OnboardingRequirementsPage() {
               "name": "Water Gun Hose",
               "code": "water_gun_hose",
               "is_required": true,
+              "media": [
+                {
+                  "requirement_item_id": 5,
+                  "media_url": "https://d2sgegy2mkmevd.cloudfront.net/app/shared/general/required_documents/tidyzon_required_kit/basic_wash_kit/exterior/water_gun_hose_1.png",
+                  "media_type": "image",
+                  "title": null,
+                  "displayorder": 1
+                }
+              ],
               "submissions": []
             }
           ]
@@ -96,8 +121,22 @@ export default function OnboardingRequirementsPage() {
           "code": "interior_wash",
           "is_required": true,
           "items": [
-            { "requirement_item_id": 13, "name": "Interior car cleaner spray", "is_required": true, "submissions": [] },
-            { "requirement_item_id": 11, "name": "Portable cordless vacuum cleaner", "is_required": true, "submissions": [] }
+            {
+              "requirement_item_id": 13,
+              "name": "Interior car cleaner spray",
+              "is_required": true,
+              "media": [
+                {
+                  "requirement_item_id": 13,
+                  "media_url": "https://d2sgegy2mkmevd.cloudfront.net/app/shared/general/required_documents/tidyzon_required_kit/basic_wash_kit/interior/interior_car_cleaner_spray_1.png",
+                  "media_type": "image",
+                  "title": null,
+                  "displayorder": 1
+                }
+              ],
+              "submissions": []
+            },
+            { "requirement_item_id": 11, "name": "Portable cordless vacuum cleaner", "is_required": true, "media": [], "submissions": [] }
           ]
         },
         "Car Tire": {
@@ -105,8 +144,22 @@ export default function OnboardingRequirementsPage() {
           "code": "car_tire",
           "is_required": true,
           "items": [
-            { "requirement_item_id": 9, "name": "Tire and rim brush", "is_required": true, "submissions": [] },
-            { "requirement_item_id": 10, "name": "Wheel or Tire shine", "is_required": true, "submissions": [] }
+            {
+              "requirement_item_id": 9,
+              "name": "Tire and rim brush",
+              "is_required": true,
+              "media": [
+                {
+                  "requirement_item_id": 9,
+                  "media_url": "https://d2sgegy2mkmevd.cloudfront.net/app/shared/general/required_documents/tidyzon_required_kit/basic_wash_kit/tire/tire_and_rim_brush_1.png",
+                  "media_type": "image",
+                  "title": null,
+                  "displayorder": 1
+                }
+              ],
+              "submissions": []
+            },
+            { "requirement_item_id": 10, "name": "Wheel or Tire shine", "is_required": true, "media": [], "submissions": [] }
           ]
         }
       }
@@ -119,7 +172,7 @@ export default function OnboardingRequirementsPage() {
         "Trash Bin Wash Kit": {
           "group_id": 8,
           "items": [
-            { "requirement_item_id": 27, "name": "360° Auto-Rotating Trash bin Brush", "is_required": true, "submissions": [] }
+            { "requirement_item_id": 27, "name": "360° Auto-Rotating Trash bin Brush", "is_required": true, "media": [], "submissions": [] }
           ]
         }
       }
@@ -161,6 +214,16 @@ export default function OnboardingRequirementsPage() {
                           { name: 'min_upload_count', type: 'integer' },
                           { name: 'max_upload_count', type: 'integer' },
                           { name: 'is_required', type: 'boolean' },
+                          {
+                            name: 'media', type: 'array', description: 'Sample reference images for this item from S3/CloudFront',
+                            fields: [
+                              { name: 'requirement_item_id', type: 'integer' },
+                              { name: 'media_url', type: 'string', description: 'CloudFront URL of the sample image' },
+                              { name: 'media_type', type: 'string', description: '"image"' },
+                              { name: 'title', type: 'string | null' },
+                              { name: 'displayorder', type: 'integer' },
+                            ],
+                          },
                           {
                             name: 'submissions', type: 'array', description: 'All submissions for this item by this provider, latest first',
                             fields: [
