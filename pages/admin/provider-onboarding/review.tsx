@@ -31,6 +31,31 @@ export default function OnboardingReviewPage() {
           {
             status: 200,
             label: 'OK',
+            sample: `{
+  "message": "Review applied successfully",
+  "tidyspid": 1,
+  "review_type": "requirement",
+  "old_status_id": 1,
+  "new_status_id": 3,
+  "history": [
+    {
+      "id": 11,
+      "old_status_id": 1,
+      "new_status_id": 3,
+      "review_notes": "Looks good",
+      "reviewed_by": 9,
+      "reviewedat": "2026-05-14T16:28:10.079855"
+    },
+    {
+      "id": 8,
+      "old_status_id": null,
+      "new_status_id": 1,
+      "review_notes": "Provider uploaded wash kit item.",
+      "reviewed_by": null,
+      "reviewedat": "2026-05-14T16:16:50.845964"
+    }
+  ]
+}`,
             fields: [
               { name: 'message', type: 'string', description: '"Review applied successfully"' },
               { name: 'tidyspid', type: 'integer' },
