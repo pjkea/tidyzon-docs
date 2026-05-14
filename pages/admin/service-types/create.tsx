@@ -23,6 +23,7 @@ export default function CreateServiceTypePage() {
             { name: 'message', type: 'string' },
             { name: 'data', type: 'object', fields: [{ name: 'servicetypeid', type: 'integer' }] },
           ],
+          sample: `{ "message": "Service type created successfully", "data": { "servicetypeid": 16 } }`,
         }]} />
         <TryItPanel method="POST" path="/v1/admin/service-types" auth="admin"
           bodyFields={[
@@ -42,7 +43,7 @@ export default function CreateServiceTypePage() {
           { name: 'price', type: 'number' },
           { name: 'sort_order', type: 'integer' },
         ]} />
-        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }] }]} />
+        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }], sample: `{ "message": "Service type updated successfully" }` }]} />
         <TryItPanel method="PUT" path="/v1/admin/service-types/{servicetypeid}" auth="admin"
           pathFields={[{ name: 'servicetypeid', type: 'number', placeholder: '1' }]}
           bodyFields={[{ name: 'name', type: 'string' }, { name: 'price', type: 'number' }]}
@@ -52,7 +53,7 @@ export default function CreateServiceTypePage() {
       <div>
         <EndpointHero method="PUT" path="/v1/admin/service-types/{servicetypeid}/toggle" title="Toggle Service Type" description="Enable or disable a service type (makes it visible/hidden to customers)." />
         <ParamsCard title="Path Parameters" params={[{ name: 'servicetypeid', type: 'integer', required: true }]} />
-        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }, { name: 'active', type: 'boolean' }] }]} />
+        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }, { name: 'active', type: 'boolean' }], sample: `{ "message": "Service type toggled successfully", "active": false }` }]} />
         <TryItPanel method="PUT" path="/v1/admin/service-types/{servicetypeid}/toggle" auth="admin"
           pathFields={[{ name: 'servicetypeid', type: 'number', placeholder: '1' }]}
         />

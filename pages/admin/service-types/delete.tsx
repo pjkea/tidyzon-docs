@@ -11,7 +11,7 @@ export default function DeleteServiceTypePage() {
       <EndpointHero method="DELETE" path="/v1/admin/service-types/{servicetypeid}" title="Delete Service Type" description="Permanently remove a service type. Cannot delete if it has been used in any past requests." />
       <ParamsCard title="Path Parameters" params={[{ name: 'servicetypeid', type: 'integer', required: true }]} />
       <ResponseExplorer responses={[
-        { status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }] },
+        { status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }], sample: `{ "message": "Service type deleted successfully" }` },
         { status: 409, label: 'Conflict', description: 'Service type is referenced by existing requests.' },
       ]} />
       <TryItPanel method="DELETE" path="/v1/admin/service-types/{servicetypeid}" auth="admin"

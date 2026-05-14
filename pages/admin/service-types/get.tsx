@@ -22,10 +22,24 @@ export default function GetServiceTypePage() {
               { name: 'price', type: 'number' },
               { name: 'active', type: 'boolean' },
               { name: 'sort_order', type: 'integer' },
-              { name: 'created_at', type: 'string' },
+              { name: 'duration', type: 'string' },
+              { name: 'currency', type: 'string' },
+              { name: 'providerCount', type: 'integer' },
+              { name: 'status', type: 'string' },
             ],
           },
         ],
+        sample: `{
+  "id": 1,
+  "name": "Speed Wash",
+  "duration": "30 mins",
+  "basePrice": 49.99,
+  "isActive": true,
+  "displayorder": 1,
+  "currency": "USD",
+  "providerCount": 0,
+  "status": "active"
+}`,
       }]} />
       <TryItPanel method="GET" path="/v1/admin/service-types/{servicetypeid}" auth="admin"
         pathFields={[{ name: 'servicetypeid', type: 'number', placeholder: '1' }]}

@@ -18,7 +18,7 @@ export default function MarkStatementPage() {
         />
         <ParamsCard title="Path Parameters" params={[{ name: 'statementid', type: 'integer', required: true }]} />
         <ParamsCard title="Body" params={[{ name: 'reference', type: 'string', description: 'Bank transfer reference (optional)' }]} />
-        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }] }]} />
+        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }], sample: `{ "message": "Statement marked as paid" }` }]} />
         <TryItPanel method="PUT" path="/v1/admin/statements/{statementid}/mark-paid" auth="admin"
           pathFields={[{ name: 'statementid', type: 'number', placeholder: '1' }]}
           bodyFields={[{ name: 'reference', type: 'string' }]}
@@ -33,7 +33,7 @@ export default function MarkStatementPage() {
           description="Revert a statement back to pending status (e.g. if a payment was reversed)."
         />
         <ParamsCard title="Path Parameters" params={[{ name: 'statementid', type: 'integer', required: true }]} />
-        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }] }]} />
+        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }], sample: `{ "message": "Statement marked as pending" }` }]} />
         <TryItPanel method="PUT" path="/v1/admin/statements/{statementid}/mark-pending" auth="admin"
           pathFields={[{ name: 'statementid', type: 'number', placeholder: '1' }]}
         />

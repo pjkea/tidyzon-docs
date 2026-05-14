@@ -35,6 +35,22 @@ export default function GetStatementPage() {
             ],
           },
         ],
+        sample: `{
+  "message": "Statement retrieved successfully",
+  "data": {
+    "statementid": 1,
+    "provider_name": "Randy Odoom",
+    "period_start": "2026-05-01",
+    "period_end": "2026-05-07",
+    "total_amount": 24.49,
+    "status": "paid",
+    "paid_at": "May 14, 2026 10:00 AM",
+    "reference": "WIRE-20260514-001",
+    "transactions": [
+      { "transactionid": 1, "type": "payout", "amount": 24.49, "created_at": "May 12, 2026 09:41 AM" }
+    ]
+  }
+}`,
       }]} />
       <TryItPanel method="GET" path="/v1/admin/statements/{statementid}" auth="admin"
         pathFields={[{ name: 'statementid', type: 'number', placeholder: '1' }]}

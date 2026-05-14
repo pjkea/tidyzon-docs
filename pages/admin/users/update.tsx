@@ -41,6 +41,7 @@ export default function UpdateUserPage() {
             fields: [
               { name: 'message', type: 'string', description: '"User updated successfully"' },
             ],
+            sample: `{ "message": "User updated successfully" }`,
           },
           { status: 404, label: 'Not Found' },
         ]}

@@ -23,6 +23,7 @@ export default function AdminLogoutPage() {
             fields: [
               { name: 'message', type: 'string', description: '"Logout successful"' },
             ],
+            sample: `{ "message": "Logout successful" }`,
           },
           { status: 401, label: 'Unauthorized', description: 'Missing or invalid token.' },
         ]}

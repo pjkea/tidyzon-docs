@@ -39,6 +39,22 @@ export default function GetTransactionPage() {
               ],
             },
           ],
+          sample: `{
+  "message": "Transaction retrieved successfully",
+  "data": {
+    "transactionid": 1,
+    "type": "payout",
+    "amount": 24.49,
+    "currency": "GHS",
+    "reference": "TXN-001-2026",
+    "notes": "Weekly payout",
+    "created_at": "May 12, 2026 09:41 AM",
+    "provider": {
+      "tidyspid": 1,
+      "name": "Randy Odoom"
+    }
+  }
+}`,
         }]}
       />
       <TryItPanel

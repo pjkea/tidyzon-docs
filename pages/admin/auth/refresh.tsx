@@ -39,6 +39,15 @@ export default function AdminRefreshPage() {
                 ],
               },
             ],
+            sample: `{
+  "message": "Token refreshed successfully",
+  "token": {
+    "access_token": "eyJraWQiOiJGS214...",
+    "id_token": "eyJraWQiOiJka2NtS...",
+    "token_type": "Bearer",
+    "expires_in": 3600
+  }
+}`,
           },
           { status: 401, label: 'Unauthorized', description: 'Refresh token is expired or invalid.' },
         ]}

@@ -50,6 +50,26 @@ export default function GetPaymentPage() {
               },
             ],
           },
+            sample: `{
+  "message": "Payment retrieved successfully",
+  "data": {
+    "paymentid": 1,
+    "requestid": 1,
+    "amount": 41.12,
+    "tip": 0.0,
+    "currency": "USD",
+    "status": "completed",
+    "payment_method": "card",
+    "gateway_reference": "ch_3PabcXYZ",
+    "created_at": "May 12, 2026 09:41 AM",
+    "customer": {
+      "userid": 2,
+      "name": "Otabil Odoom",
+      "email": "engineeringcaldarmallafrica@gmail.com"
+    }
+  }
+}`,
+          },
           { status: 404, label: 'Not Found' },
         ]}
       />

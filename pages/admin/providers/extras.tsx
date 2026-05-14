@@ -30,17 +30,43 @@ export default function ProviderExtrasPage() {
                 {
                   name: 'data', type: 'object', fields: [
                     {
-                      name: 'locations', type: 'array', fields: [
-                        { name: 'locationid', type: 'integer' },
-                        { name: 'address', type: 'string' },
-                        { name: 'latitude', type: 'number' },
-                        { name: 'longitude', type: 'number' },
-                        { name: 'is_default', type: 'boolean' },
+                      name: 'providers', type: 'array', fields: [
+                        { name: 'id', type: 'string' },
+                        { name: 'entityType', type: 'string' },
+                        { name: 'name', type: 'string' },
+                        { name: 'email', type: 'string' },
+                        { name: 'phone', type: 'string' },
+                        { name: 'status', type: 'string' },
+                        { name: 'lastPing', type: 'string' },
+                        { name: 'coordinates', type: 'object', fields: [
+                          { name: 'lat', type: 'number' }, { name: 'lng', type: 'number' },
+                        ]},
                       ],
                     },
                   ],
                 },
               ],
+              sample: `{
+  "providers": [
+    {
+      "id": "1",
+      "entityType": "provider",
+      "name": "Randy Odoom",
+      "email": "randyodoom19@gmail.com",
+      "phone": "+11273787677",
+      "serviceType": null,
+      "location": null,
+      "status": "online",
+      "verified": false,
+      "rating": null,
+      "completedJobs": 1,
+      "joinDate": "February 23, 2026 09:52 AM",
+      "lastActive": "March 22, 2026 08:48 PM",
+      "lastPing": "May 12, 2026 05:13 PM",
+      "coordinates": { "lat": 5.7203952, "lng": -0.328613 }
+    }
+  ]
+}`,
             },
           ]}
         />
@@ -76,6 +102,7 @@ export default function ProviderExtrasPage() {
               status: 200,
               label: 'OK',
               fields: [{ name: 'message', type: 'string' }],
+              sample: `{ "message": "Washkit status updated successfully" }`,
             },
           ]}
         />

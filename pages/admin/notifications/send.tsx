@@ -29,6 +29,7 @@ export default function SendNotificationPage() {
             { name: 'message', type: 'string' },
             { name: 'data', type: 'object', fields: [{ name: 'notificationid', type: 'integer' }] },
           ],
+          sample: `{ "message": "Notification created successfully", "data": { "notificationid": 5 } }`,
         }]} />
         <TryItPanel method="POST" path="/v1/admin/notifications" auth="admin"
           bodyFields={[
@@ -47,7 +48,7 @@ export default function SendNotificationPage() {
           description="Immediately dispatch a notification to its target recipients via Firebase Cloud Messaging."
         />
         <ParamsCard title="Path Parameters" params={[{ name: 'notificationid', type: 'integer', required: true }]} />
-        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }] }]} />
+        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }], sample: `{ "message": "Notification sent successfully" }` }]} />
         <TryItPanel method="POST" path="/v1/admin/notifications/{notificationid}/send" auth="admin"
           pathFields={[{ name: 'notificationid', type: 'number', placeholder: '1' }]}
         />
@@ -64,7 +65,7 @@ export default function SendNotificationPage() {
         <ParamsCard title="Body" params={[
           { name: 'scheduled_at', type: 'string', required: true, description: 'ISO 8601 datetime to send' },
         ]} />
-        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }] }]} />
+        <ResponseExplorer responses={[{ status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }], sample: `{ "message": "Notification scheduled successfully" }` }]} />
         <TryItPanel method="POST" path="/v1/admin/notifications/{notificationid}/schedule" auth="admin"
           pathFields={[{ name: 'notificationid', type: 'number', placeholder: '1' }]}
           bodyFields={[{ name: 'scheduled_at', type: 'string', placeholder: '2026-06-01T09:00:00Z' }]}

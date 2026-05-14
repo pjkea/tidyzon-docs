@@ -31,6 +31,7 @@ export default function ForgotPasswordPage() {
             fields: [
               { name: 'message', type: 'string', description: '"Password reset code sent to email"' },
             ],
+            sample: `{ "message": "Password reset code sent to email" }`,
           },
           { status: 404, label: 'Not Found', description: 'No account found for the provided email.' },
         ]}

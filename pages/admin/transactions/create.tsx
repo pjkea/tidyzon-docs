@@ -33,6 +33,7 @@ export default function CreateTransactionPage() {
             { name: 'message', type: 'string' },
             { name: 'data', type: 'object', fields: [{ name: 'transactionid', type: 'integer' }] },
           ],
+          sample: `{ "message": "Transaction created successfully", "data": { "transactionid": 12 } }`,
         }]}
       />
       <TryItPanel

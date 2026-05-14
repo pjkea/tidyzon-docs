@@ -42,6 +42,27 @@ export default function AdminLoginPage() {
               },
             ],
           },
+            sample: `{
+  "message": "Login successful",
+  "token": {
+    "access_token": "eyJraWQiOiJGS214...",
+    "id_token": "eyJraWQiOiJka2NtS...",
+    "refresh_token": "eyJjdHkiOiJKV1Qi...",
+    "token_type": "Bearer",
+    "expires_in": 3600
+  },
+  "user": {
+    "userid": 9,
+    "email": "nsafulansahk@gmail.com",
+    "firstname": "Kwamena",
+    "lastname": "Essiful-Ansah",
+    "phonenumber": "+233249795541",
+    "roleid": 5,
+    "latitude": 33.761572,
+    "longitude": -84.385946
+  }
+}`,
+          },
           { status: 401, label: 'Unauthorized', description: 'Invalid email or password.' },
           { status: 403, label: 'Forbidden', description: 'Account is disabled or not in the admin group.' },
         ]}

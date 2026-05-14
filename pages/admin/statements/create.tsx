@@ -21,6 +21,7 @@ export default function CreateStatementPage() {
           { name: 'message', type: 'string' },
           { name: 'data', type: 'object', fields: [{ name: 'statementid', type: 'integer' }, { name: 'total_amount', type: 'number' }] },
         ],
+        sample: `{ "message": "Statement created successfully", "data": { "statementid": 2, "total_amount": 48.98 } }`,
       }]} />
       <TryItPanel method="POST" path="/v1/admin/statements" auth="admin"
         bodyFields={[

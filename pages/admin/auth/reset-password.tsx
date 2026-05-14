@@ -33,6 +33,7 @@ export default function ResetPasswordPage() {
             fields: [
               { name: 'message', type: 'string', description: '"Password reset successful"' },
             ],
+            sample: `{ "message": "Password reset successful" }`,
           },
           { status: 400, label: 'Bad Request', description: 'Invalid or expired verification code.' },
         ]}

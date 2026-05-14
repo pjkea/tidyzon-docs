@@ -17,7 +17,7 @@ export default function DeleteNotificationPage() {
       />
       <ParamsCard title="Path Parameters" params={[{ name: 'notificationid', type: 'integer', required: true }]} />
       <ResponseExplorer responses={[
-        { status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }] },
+        { status: 200, label: 'OK', fields: [{ name: 'message', type: 'string' }], sample: `{ "message": "Notification deleted successfully" }` },
         { status: 400, label: 'Bad Request', description: 'Cannot delete a notification that has already been sent.' },
       ]} />
       <TryItPanel method="DELETE" path="/v1/admin/notifications/{notificationid}" auth="admin"

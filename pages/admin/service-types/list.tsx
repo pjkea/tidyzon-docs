@@ -27,12 +27,50 @@ export default function ListServiceTypesPage() {
                     { name: 'description', type: 'string' },
                     { name: 'price', type: 'number' },
                     { name: 'active', type: 'boolean' },
-                    { name: 'sort_order', type: 'integer' },
+                    { name: 'duration', type: 'string' },
+                    { name: 'currency', type: 'string' },
+                    { name: 'providerCount', type: 'integer' },
+                    { name: 'status', type: 'string' },
                   ],
                 },
               ],
             },
           ],
+          sample: `[
+  {
+    "id": 15,
+    "name": "Interior Wash",
+    "duration": "15 mins",
+    "basePrice": 29.99,
+    "isActive": true,
+    "displayorder": 10,
+    "currency": "USD",
+    "providerCount": 2,
+    "status": "active"
+  },
+  {
+    "id": 1,
+    "name": "Speed Wash",
+    "duration": "30 mins",
+    "basePrice": 49.99,
+    "isActive": true,
+    "displayorder": 1,
+    "currency": "USD",
+    "providerCount": 0,
+    "status": "active"
+  },
+  {
+    "id": 2,
+    "name": "Deluxe Wash",
+    "duration": "2hrs 30mins",
+    "basePrice": 155.0,
+    "isActive": true,
+    "displayorder": 2,
+    "currency": "USD",
+    "providerCount": 0,
+    "status": "active"
+  }
+]`,
         }]}
       />
       <TryItPanel method="GET" path="/v1/admin/service-types" auth="admin" />
