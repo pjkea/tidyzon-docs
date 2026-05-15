@@ -49,7 +49,6 @@ export default function GetPaymentPage() {
                 ],
               },
             ],
-          },
             sample: `{
   "message": "Payment retrieved successfully",
   "data": {

@@ -41,7 +41,6 @@ export default function AdminLoginPage() {
                 ],
               },
             ],
-          },
             sample: `{
   "message": "Login successful",
   "token": {
