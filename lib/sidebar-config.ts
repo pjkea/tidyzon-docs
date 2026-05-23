@@ -104,4 +104,10 @@ export const sidebarConfig: SidebarItem[] = [
       { type: 'link', label: 'Permissions', href: '/admin/permissions', method: 'GET' },
     ],
   },
+  { type: 'divider' },
+  {
+    type: 'group', label: 'Realtime', defaultOpen: false, items: [
+      { type: 'link', label: 'In-App Chat', href: '/realtime/chat', method: 'WS' },
+    ],
+  },
 ]

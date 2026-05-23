@@ -4,6 +4,7 @@ const METHOD_CLASSES: Record<string, string> = {
   PUT: 'method-put',
   PATCH: 'method-patch',
   DELETE: 'method-delete',
+  WS: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
 }
 
 export function MethodBadge({ method }: { method: string }) {
