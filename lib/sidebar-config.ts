@@ -50,6 +50,8 @@ export const sidebarConfig: SidebarItem[] = [
         type: 'group', label: 'Provider Onboarding', defaultOpen: false, items: [
           { type: 'link', label: 'Documents', href: '/admin/provider-onboarding/documents', method: 'GET' },
           { type: 'link', label: 'Requirements', href: '/admin/provider-onboarding/requirements', method: 'GET' },
+          { type: 'link', label: 'Quiz', href: '/admin/provider-onboarding/quiz', method: 'GET' },
+          { type: 'link', label: 'Modes', href: '/admin/provider-onboarding/modes', method: 'GET' },
           { type: 'link', label: 'Review', href: '/admin/provider-onboarding/review', method: 'POST' },
           { type: 'link', label: 'Document Types', href: '/admin/document-types', method: 'GET' },
         ],
@@ -102,6 +104,17 @@ export const sidebarConfig: SidebarItem[] = [
         ],
       },
       { type: 'link', label: 'Permissions', href: '/admin/permissions', method: 'GET' },
+    ],
+  },
+  { type: 'divider' },
+  {
+    type: 'group', label: 'Provider', defaultOpen: false, items: [
+      {
+        type: 'group', label: 'Quiz', defaultOpen: false, items: [
+          { type: 'link', label: 'Get Quiz Sections', href: '/provider/quiz/get', method: 'GET' },
+          { type: 'link', label: 'Submit Quiz', href: '/provider/quiz/submit', method: 'POST' },
+        ],
+      },
     ],
   },
   { type: 'divider' },
