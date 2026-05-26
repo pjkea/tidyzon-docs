@@ -183,13 +183,27 @@ export default function InAppChatPage() {
 
         <WSEventCard
           direction="receive"
+          action="peer-online"
+          description="The peer just connected to this order's socket. Use this to show a presence indicator ('Provider is online')."
+          example={`{
+  "action": "peer-online",
+  "orderid": 20,
+  "userId": 1770,
+  "role": "provider"
+}`}
+          notes="Only fires when the peer opens a new connection. Not emitted on reconnect if they already have another active connection on the order."
+        />
+
+        <WSEventCard
+          direction="receive"
           action="peer-offline"
-          description="The peer just disconnected. Use this to display a 'Provider is offline' indicator."
+          description="The peer has no more active connections on this order (all their devices/tabs closed). Use this to display a 'Provider is offline' indicator."
           example={`{
   "action": "peer-offline",
   "orderid": 20,
   "userId": 1770
 }`}
+          notes="Multi-device aware — only fires when the last connection for that user on this order is removed. Closing one tab while another is open does not trigger this."
         />
 
         <WSEventCard
@@ -198,7 +212,7 @@ export default function InAppChatPage() {
           description="Server-side validation or state error. The message field is human-readable; do not parse it for logic."
           example={`{
   "action": "error",
-  "message": "No peer found on this order"
+  "message": "No peer on this order yet"
 }`}
         />
       </section>
