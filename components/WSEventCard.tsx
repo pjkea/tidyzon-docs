@@ -7,6 +7,7 @@ interface WSEventCardProps {
   payload?: string
   example: string
   notes?: string
+  badge?: string   // e.g. "NEW" — renders a highlighted pill and amber border
 }
 
 const DIRECTION_LABEL: Record<WSEventCardProps['direction'], string> = {
@@ -26,10 +27,19 @@ export function WSEventCard({
   payload,
   example,
   notes,
+  badge,
 }: WSEventCardProps) {
   return (
-    <div className="mb-6 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-900">
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60">
+    <div className={`mb-6 rounded-lg overflow-hidden bg-white dark:bg-slate-900 ${
+      badge
+        ? 'border-2 border-amber-400 dark:border-amber-500'
+        : 'border border-slate-200 dark:border-slate-700'
+    }`}>
+      <div className={`flex items-center gap-3 px-4 py-3 border-b ${
+        badge
+          ? 'border-amber-300 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/20'
+          : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60'
+      }`}>
         <span
           className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded ${DIRECTION_CLASS[direction]}`}
         >
@@ -38,6 +48,11 @@ export function WSEventCard({
         <code className="text-sm font-mono font-semibold text-slate-900 dark:text-slate-100">
           {action}
         </code>
+        {badge && (
+          <span className="ml-auto text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded bg-amber-400 text-amber-900 dark:bg-amber-500 dark:text-amber-950">
+            {badge}
+          </span>
+        )}
       </div>
 
       <div className="px-4 py-3">

@@ -71,7 +71,7 @@ export default function InAppChatPage() {
       {/* Send events */}
       <section className="mb-8">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-1">
-          Send Events
+          Send Events — Chat
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
           Sent by the client over the open socket. Every payload must include an <code className="font-mono text-xs">action</code> field.
@@ -102,6 +102,245 @@ export default function InAppChatPage() {
   message: "On my way"
 }));`}
           notes="Server replies with 'message-sent' (ack to sender) and pushes 'receive-message' to the peer."
+        />
+      </section>
+
+      {/* ── VOICE CALLS ──────────────────────────────────────────────────── */}
+      <div className="mb-8 p-4 rounded-xl border-2 border-amber-400 dark:border-amber-500 bg-amber-50 dark:bg-amber-900/10">
+        <div className="flex items-center gap-3 mb-1">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Voice Calls
+          </h2>
+          <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded bg-amber-400 text-amber-900 dark:bg-amber-500 dark:text-amber-950">
+            NEW
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          WebRTC voice calls over the same socket. The server acts as a pure signaling relay — it never
+          touches the audio stream. Both peers negotiate directly once the SDP exchange completes.
+          The <code className="font-mono text-xs">call_sessions</code> table tracks live call state to
+          prevent double-booking and clean up on disconnect.
+        </p>
+      </div>
+
+      {/* Voice — how it works */}
+      <section className="mb-8">
+        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+          How it works
+        </h3>
+        <pre className="bg-slate-900 dark:bg-black text-slate-100 text-xs font-mono p-4 rounded-lg overflow-x-auto leading-relaxed">
+{`Caller                       Server                       Callee
+  │                             │                             │
+  │── start-call (sdpOffer) ───▶│                             │
+  │                             │──── call-incoming ─────────▶│
+  │◀──── call-ringing ──────────│                             │
+  │                             │                             │
+  │                             │◀─── answer-call (sdpAnswer)─│
+  │◀──── call-answered ─────────│                             │
+  │                             │                             │
+  │─── ice-candidate ──────────▶│──── ice-candidate ─────────▶│
+  │◀─── ice-candidate ──────────│◀─── ice-candidate ──────────│
+  │                             │                             │
+  │═══════════════ WebRTC peer-to-peer audio ════════════════│
+  │                             │                             │
+  │── end-call ────────────────▶│──── call-ended ────────────▶│`}
+        </pre>
+        <p className="mt-3 text-xs text-slate-500 dark:text-slate-500 italic">
+          If either party disconnects mid-call the server automatically cleans up the call session and
+          pushes <code className="font-mono">call-ended</code> (with <code className="font-mono">reason: "disconnected"</code>) to the remaining peer.
+        </p>
+      </section>
+
+      {/* Voice — send events */}
+      <section className="mb-8">
+        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
+          Send Events — Voice
+        </h3>
+
+        <WSEventCard
+          direction="send"
+          action="start-call"
+          badge="NEW"
+          description="Initiate a voice call to the peer on this order. The server creates a call session (state: ringing), then relays the SDP offer to the peer as a call-incoming event. Fails immediately if either party is already in an active call."
+          payload={`{
+  "action": "start-call",
+  "sdpOffer": { "type": "offer", "sdp": "v=0\\r\\n..." }
+}`}
+          example={`const offer = await peerConnection.createOffer();
+await peerConnection.setLocalDescription(offer);
+
+ws.send(JSON.stringify({
+  action: "start-call",
+  sdpOffer: offer
+}));`}
+          notes="Server responds with call-ringing (to caller) and call-incoming (to callee). Peer must be connected — if they are offline the call is cancelled immediately."
+        />
+
+        <WSEventCard
+          direction="send"
+          action="answer-call"
+          badge="NEW"
+          description="Accept an incoming call. Only the callee can send this. Updates the call session to connected and relays the SDP answer back to the caller."
+          payload={`{
+  "action": "answer-call",
+  "callId": "call-1716840000000-a1b2c3d4",
+  "sdpAnswer": { "type": "answer", "sdp": "v=0\\r\\n..." }
+}`}
+          example={`// Called after receiving call-incoming
+await peerConnection.setRemoteDescription(data.sdpOffer);
+const answer = await peerConnection.createAnswer();
+await peerConnection.setLocalDescription(answer);
+
+ws.send(JSON.stringify({
+  action: "answer-call",
+  callId: data.callId,
+  sdpAnswer: answer
+}));`}
+        />
+
+        <WSEventCard
+          direction="send"
+          action="ice-candidate"
+          badge="NEW"
+          description="Relay a WebRTC ICE candidate to the peer. Send as soon as the browser's RTCPeerConnection fires the icecandidate event. Works in both directions — caller and callee both send and receive these."
+          payload={`{
+  "action": "ice-candidate",
+  "callId": "call-1716840000000-a1b2c3d4",
+  "candidate": {
+    "candidate": "candidate:0 1 UDP 2122252543 ...",
+    "sdpMLineIndex": 0,
+    "sdpMid": "0"
+  }
+}`}
+          example={`peerConnection.onicecandidate = (e) => {
+  if (e.candidate) {
+    ws.send(JSON.stringify({
+      action: "ice-candidate",
+      callId: currentCallId,
+      candidate: e.candidate
+    }));
+  }
+};`}
+        />
+
+        <WSEventCard
+          direction="send"
+          action="end-call"
+          badge="NEW"
+          description="End an active or ringing call. Either the caller or callee can send this at any point. The server deletes the call session and notifies the peer with call-ended."
+          payload={`{
+  "action": "end-call",
+  "callId": "call-1716840000000-a1b2c3d4"
+}`}
+          example={`ws.send(JSON.stringify({
+  action: "end-call",
+  callId: currentCallId
+}));
+peerConnection.close();`}
+        />
+
+        <WSEventCard
+          direction="send"
+          action="reject-call"
+          badge="NEW"
+          description="Decline an incoming call without answering. Only the callee can send this, and only while the call is still ringing. The caller receives call-rejected."
+          payload={`{
+  "action": "reject-call",
+  "callId": "call-1716840000000-a1b2c3d4"
+}`}
+          example={`// Called from the incoming call UI when user taps "Decline"
+ws.send(JSON.stringify({
+  action: "reject-call",
+  callId: data.callId
+}));`}
+        />
+      </section>
+
+      {/* Voice — receive events */}
+      <section className="mb-8">
+        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
+          Receive Events — Voice
+        </h3>
+
+        <WSEventCard
+          direction="receive"
+          action="call-incoming"
+          badge="NEW"
+          description="The peer is calling you. Show an incoming call UI and set the SDP offer on the peer connection. Respond with answer-call (accept) or reject-call (decline)."
+          example={`{
+  "action": "call-incoming",
+  "callId": "call-1716840000000-a1b2c3d4",
+  "callerId": 9,
+  "orderid": 20,
+  "sdpOffer": { "type": "offer", "sdp": "v=0\\r\\n..." }
+}`}
+        />
+
+        <WSEventCard
+          direction="receive"
+          action="call-ringing"
+          badge="NEW"
+          description="Acknowledgement to the caller that the call was created and the peer has been notified. Show a 'Ringing…' UI. Store the callId — you will need it for end-call or ice-candidate."
+          example={`{
+  "action": "call-ringing",
+  "callId": "call-1716840000000-a1b2c3d4",
+  "orderid": 20
+}`}
+        />
+
+        <WSEventCard
+          direction="receive"
+          action="call-answered"
+          badge="NEW"
+          description="The callee accepted the call. Set the SDP answer on your peer connection, then begin exchanging ICE candidates. Audio will connect once the ICE negotiation completes."
+          example={`{
+  "action": "call-answered",
+  "callId": "call-1716840000000-a1b2c3d4",
+  "orderid": 20,
+  "sdpAnswer": { "type": "answer", "sdp": "v=0\\r\\n..." }
+}`}
+          notes="After receiving this, call peerConnection.setRemoteDescription(data.sdpAnswer) to complete SDP negotiation."
+        />
+
+        <WSEventCard
+          direction="receive"
+          action="call-ended"
+          badge="NEW"
+          description="The call was ended — either by the other party calling end-call or by a disconnect. Close the peer connection and dismiss the call UI."
+          example={`{
+  "action": "call-ended",
+  "callId": "call-1716840000000-a1b2c3d4",
+  "orderid": 20,
+  "endedBy": 9,
+  "reason": "disconnected"
+}`}
+          notes="reason is only present when the call ended due to a socket disconnect rather than an explicit end-call action."
+        />
+
+        <WSEventCard
+          direction="receive"
+          action="call-rejected"
+          badge="NEW"
+          description="The callee declined the call. Show a 'Call declined' UI and clean up the peer connection."
+          example={`{
+  "action": "call-rejected",
+  "callId": "call-1716840000000-a1b2c3d4",
+  "orderid": 20,
+  "rejectedBy": 1770
+}`}
+        />
+
+        <WSEventCard
+          direction="receive"
+          action="call-error"
+          badge="NEW"
+          description="A call action failed. The message field describes the reason. Common causes: peer offline, already in a call, invalid callId, or calling end-call when not a participant."
+          example={`{
+  "action": "call-error",
+  "message": "Peer is already in a call",
+  "callId": "call-1716840000000-a1b2c3d4"
+}`}
+          notes="callId is only present when the error relates to a specific call session."
         />
       </section>
 
