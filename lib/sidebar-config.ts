@@ -108,6 +108,16 @@ export const sidebarConfig: SidebarItem[] = [
   },
   { type: 'divider' },
   {
+    type: 'group', label: 'User App', defaultOpen: false, items: [
+      {
+        type: 'group', label: 'Profile', defaultOpen: true, items: [
+          { type: 'link', label: 'Update Profile', href: '/user/profile/update', method: 'POST' },
+        ],
+      },
+    ],
+  },
+  { type: 'divider' },
+  {
     type: 'group', label: 'Provider', defaultOpen: false, items: [
       {
         type: 'group', label: 'Quiz', defaultOpen: false, items: [
