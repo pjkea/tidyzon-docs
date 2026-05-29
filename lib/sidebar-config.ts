@@ -108,6 +108,18 @@ export const sidebarConfig: SidebarItem[] = [
   },
   { type: 'divider' },
   {
+    type: 'group', label: 'App', defaultOpen: false, items: [
+      { type: 'link', label: 'Bootstrap', href: '/app/bootstrap', method: 'GET' },
+      {
+        type: 'group', label: 'MOTD', defaultOpen: true, items: [
+          { type: 'link', label: 'Accept', href: '/app/motd/accept', method: 'POST' },
+          { type: 'link', label: 'Dismiss', href: '/app/motd/dismiss', method: 'POST' },
+        ],
+      },
+    ],
+  },
+  { type: 'divider' },
+  {
     type: 'group', label: 'User App', defaultOpen: false, items: [
       {
         type: 'group', label: 'Profile', defaultOpen: true, items: [

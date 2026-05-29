@@ -92,4 +92,9 @@ export const searchIndex: SearchEntry[] = [
   { title: 'Locations', method: 'GET', path: '/v1/admin/locations', href: '/admin/locations', description: 'All provider and user location records' },
   { title: 'Document Types', method: 'GET', path: '/v1/admin/providers/required-documents', href: '/admin/document-types', description: 'Provider onboarding document type definitions' },
   { title: 'Admin Profile', method: 'GET', path: '/v1/admin/profile', href: '/admin/profile', description: 'Profile of the authenticated admin user' },
+
+  // App (MOTD + AppVariables)
+  { title: 'App Bootstrap', method: 'GET', path: '/v1/app/bootstrap', href: '/app/bootstrap', description: 'Startup AppVariables + audience-filtered MOTD messages' },
+  { title: 'Accept MOTD', method: 'POST', path: '/v1/app/motd/{id}/accept', href: '/app/motd/accept', description: 'Record acceptance of a message (e.g. updated Terms & Conditions)' },
+  { title: 'Dismiss MOTD', method: 'POST', path: '/v1/app/motd/{id}/dismiss', href: '/app/motd/dismiss', description: "Record \"Don't show this again\" for a message" },
 ]
