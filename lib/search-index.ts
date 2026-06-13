@@ -97,4 +97,9 @@ export const searchIndex: SearchEntry[] = [
   { title: 'App Bootstrap', method: 'GET', path: '/v1/app/bootstrap', href: '/app/bootstrap', description: 'Startup AppVariables + audience-filtered MOTD messages' },
   { title: 'Accept MOTD', method: 'POST', path: '/v1/app/motd/{id}/accept', href: '/app/motd/accept', description: 'Record acceptance of a message (e.g. updated Terms & Conditions)' },
   { title: 'Dismiss MOTD', method: 'POST', path: '/v1/app/motd/{id}/dismiss', href: '/app/motd/dismiss', description: "Record \"Don't show this again\" for a message" },
+
+  // User App — Payments (Stripe Checkout)
+  { title: 'Setup Payment Sheet', method: 'POST', path: '/payment-sheet', href: '/user/payments/setup', description: 'Ensure a Stripe customer + SetupIntent before checkout' },
+  { title: 'Create Checkout Session', method: 'POST', path: '/checkout-session', href: '/user/payments/checkout-session', description: 'Open a Stripe Checkout manual-capture hold for a request (promo + tax)' },
+  { title: 'Rate Provider & Tip', method: 'POST', path: '/v1/user/requests/ratings', href: '/user/payments/rate-tip', description: 'Rate a completed order and charge an off-session tip' },
 ]

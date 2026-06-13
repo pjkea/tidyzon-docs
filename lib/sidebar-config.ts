@@ -126,6 +126,13 @@ export const sidebarConfig: SidebarItem[] = [
           { type: 'link', label: 'Update Profile', href: '/user/profile/update', method: 'POST' },
         ],
       },
+      {
+        type: 'group', label: 'Payments', defaultOpen: true, items: [
+          { type: 'link', label: 'Setup Payment Sheet', href: '/user/payments/setup', method: 'POST' },
+          { type: 'link', label: 'Create Checkout Session', href: '/user/payments/checkout-session', method: 'POST' },
+          { type: 'link', label: 'Rate Provider & Tip', href: '/user/payments/rate-tip', method: 'POST' },
+        ],
+      },
     ],
   },
   { type: 'divider' },
