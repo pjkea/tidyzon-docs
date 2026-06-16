@@ -103,6 +103,14 @@ export const sidebarConfig: SidebarItem[] = [
           { type: 'link', label: 'Delete Service Type', href: '/admin/service-types/delete', method: 'DELETE' },
         ],
       },
+      {
+        type: 'group', label: 'Promo Codes', defaultOpen: false, items: [
+          { type: 'link', label: 'List Promo Codes', href: '/admin/promo-codes/list', method: 'GET' },
+          { type: 'link', label: 'Check Promo Code', href: '/admin/promo-codes/check', method: 'GET' },
+          { type: 'link', label: 'Mint Promo Code', href: '/admin/promo-codes/mint', method: 'POST' },
+          { type: 'link', label: 'Toggle Promo Code', href: '/admin/promo-codes/toggle', method: 'POST' },
+        ],
+      },
       { type: 'link', label: 'Permissions', href: '/admin/permissions', method: 'GET' },
     ],
   },
