@@ -85,6 +85,12 @@ export const searchIndex: SearchEntry[] = [
   { title: 'Create / Update Service Type', method: 'POST', path: '/v1/admin/service-types', href: '/admin/service-types/create', description: 'Create or update service packages' },
   { title: 'Delete Service Type', method: 'DELETE', path: '/v1/admin/service-types/{servicetypeid}', href: '/admin/service-types/delete', description: 'Remove a service type' },
 
+  // Promo Codes
+  { title: 'List Promo Codes', method: 'GET', path: '/v1/admin/promo-codes', href: '/admin/promo-codes/list', description: 'Minted Stripe promo codes with status flags' },
+  { title: 'Check Promo Code', method: 'GET', path: '/v1/admin/promo-codes/{code}', href: '/admin/promo-codes/check', description: 'Look up a code: expired / used / active' },
+  { title: 'Mint Promo Code', method: 'POST', path: '/v1/admin/promo-codes', href: '/admin/promo-codes/mint', description: 'Create promotion codes against a Stripe coupon' },
+  { title: 'Toggle Promo Code', method: 'POST', path: '/v1/admin/promo-codes/{id}/toggle', href: '/admin/promo-codes/toggle', description: 'Enable or disable a promo code' },
+
   // Permissions
   { title: 'Permissions', method: 'GET', path: '/v1/admin/permissions', href: '/admin/permissions', description: 'View and update role permission matrix' },
 
