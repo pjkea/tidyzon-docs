@@ -12,7 +12,7 @@ export default function SetupPaymentSheetPage() {
         method="POST"
         path="/payment-sheet"
         title="Setup Payment Sheet"
-        description="Ensures the signed-in user has a Stripe customer (creating one if needed) and returns a SetupIntent + ephemeral key. Call this once before Create Checkout Session — Checkout needs the customer to exist."
+        description="Ensures the signed-in user has a Stripe customer (creating one if needed) and returns a SetupIntent + CustomerSession client secret for the mobile PaymentSheet / CustomerSheet. Call this once before Create Checkout Session — Checkout needs the customer to exist."
       />
 
       <section className="mb-6">
@@ -54,16 +54,16 @@ Content-Type: application/json
             sample: `{
   "setupIntentId": "seti_1ABC...",
   "setupIntent": "seti_1ABC..._secret_...",
-  "ephemeralKey": "ek_test_...",
+  "customerSessionClientSecret": "cuss_secret_...",
   "stripeCustomerId": "cus_ABC123",
   "userId": 9
 }`,
             fields: [
-              { name: 'setupIntentId',    type: 'string', description: 'SetupIntent id.' },
-              { name: 'setupIntent',      type: 'string', description: 'SetupIntent client secret.' },
-              { name: 'ephemeralKey',     type: 'string', description: 'Ephemeral key secret for the Stripe mobile SDK.' },
-              { name: 'stripeCustomerId', type: 'string', description: 'The Stripe customer id (cus_...) used by Create Checkout Session.' },
-              { name: 'userId',           type: 'integer', description: 'The signed-in user id.' },
+              { name: 'setupIntentId',               type: 'string', description: 'SetupIntent id.' },
+              { name: 'setupIntent',                 type: 'string', description: 'SetupIntent client secret.' },
+              { name: 'customerSessionClientSecret', type: 'string', description: 'CustomerSession client secret (cuss_secret_...). Pass to the mobile SDK CustomerConfiguration in place of the ephemeral key.' },
+              { name: 'stripeCustomerId',            type: 'string', description: 'The Stripe customer id (cus_...) used by Create Checkout Session.' },
+              { name: 'userId',                      type: 'integer', description: 'The signed-in user id.' },
             ],
           },
           { status: 401, label: 'Unauthorized — missing or invalid token' },
@@ -77,6 +77,9 @@ Content-Type: application/json
         </h3>
         <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-1.5">
           <li>If the user already has a valid Stripe customer it is reused; otherwise a new one is created automatically.</li>
+          <li><strong>No <code className="font-mono text-xs">ephemeralKey</code> is returned.</strong> On the current Stripe API version (<code className="font-mono text-xs">2025-09-30.clover</code>) an ephemeral key can no longer list payment methods or retrieve a SetupIntent (returns <code className="font-mono text-xs">403 more_permissions_required</code>). The mobile SDK must use <code className="font-mono text-xs">customerSessionClientSecret</code> with its <code className="font-mono text-xs">CustomerConfiguration</code> instead, on an SDK version that supports CustomerSession.</li>
+          <li>The CustomerSession enables both the <code className="font-mono text-xs">mobile_payment_element</code> (PaymentSheet — add a card) and <code className="font-mono text-xs">customer_sheet</code> (manage saved cards) components.</li>
+          <li>To display the user&apos;s saved cards (e.g. on a request summary), call <a href="/user/payments/methods" className="text-sky-600 dark:text-sky-400 underline">List Saved Cards</a> — do not list them client-side via the Stripe SDK.</li>
           <li>You no longer need the user to save a card up front for the live flow — Checkout collects the card. The customer object just needs to exist.</li>
           <li>Required before <a href="/user/payments/checkout-session" className="text-sky-600 dark:text-sky-400 underline">Create Checkout Session</a>, which returns <code className="font-mono text-xs">400 No Stripe customer found</code> otherwise.</li>
         </ul>
