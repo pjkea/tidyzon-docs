@@ -105,6 +105,7 @@ export const searchIndex: SearchEntry[] = [
   { title: 'Dismiss MOTD', method: 'POST', path: '/v1/app/motd/{id}/dismiss', href: '/app/motd/dismiss', description: "Record \"Don't show this again\" for a message" },
 
   // User App — Payments (Stripe Checkout)
+  { title: 'Payment & Matching Lifecycle', href: '/user/payments/lifecycle', description: 'End-to-end: summary → pay (hold) → matching → provider assigned → completion (capture/charge)' },
   { title: 'Setup Payment Sheet', method: 'POST', path: '/payment-sheet', href: '/user/payments/setup', description: 'Ensure a Stripe customer + SetupIntent + CustomerSession before checkout' },
   { title: 'List Saved Cards', method: 'POST', path: '/customer-payment-methods', href: '/user/payments/methods', description: 'List a user’s saved cards live from Stripe (brand, last4, default)' },
   { title: 'Create Checkout Session', method: 'POST', path: '/checkout-session', href: '/user/payments/checkout-session', description: 'Open a Stripe Checkout manual-capture hold for a request (promo + tax)' },

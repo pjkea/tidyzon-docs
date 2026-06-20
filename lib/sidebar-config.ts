@@ -136,6 +136,7 @@ export const sidebarConfig: SidebarItem[] = [
       },
       {
         type: 'group', label: 'Payments', defaultOpen: true, items: [
+          { type: 'link', label: 'Payment & Matching Lifecycle', href: '/user/payments/lifecycle' },
           { type: 'link', label: 'Setup Payment Sheet', href: '/user/payments/setup', method: 'POST' },
           { type: 'link', label: 'List Saved Cards', href: '/user/payments/methods', method: 'POST' },
           { type: 'link', label: 'Create Checkout Session', href: '/user/payments/checkout-session', method: 'POST' },
